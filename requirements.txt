@@ -1,0 +1,11 @@
+Django==5.2.15
+python-dotenv==1.2.2
+psycopg2-binary==2.9.12
+supabase==2.31.0
+razorpay==2.0.1
+Pillow==12.1.0
+requests==2.34.2
+channels==4.3.2
+djangorestframework==3.17.1
+djangorestframework-simplejwt==5.5.1
+gunicorn

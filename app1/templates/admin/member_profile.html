@@ -1,0 +1,547 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#070b17;
+      --bg2:#0b1220;
+      --card:rgba(255,255,255,.04);
+      --border:rgba(148,163,184,.14);
+      --text:#e5eefb;
+      --muted:#94a3b8;
+      --warning:#fbbf24;
+      --shadow:0 24px 70px rgba(0,0,0,.42);
+      --radius:22px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+    body{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.22), transparent 30%),
+        radial-gradient(circle at top right, rgba(16,185,129,.14), transparent 25%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      color:var(--text);
+      padding:24px;
+    }
+
+    .container{max-width:1250px;margin:0 auto}
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:22px;
+    }
+
+    .back-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--text);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      padding:12px 16px;
+      border-radius:14px;
+      transition:.2s ease;
+      font-weight:600;
+    }
+
+    .back-btn:hover{
+      background:rgba(255,255,255,.09);
+      transform:translateY(-1px);
+    }
+
+    .page-title h1{
+      font-size:30px;
+      font-weight:800;
+      line-height:1.1;
+    }
+
+    .page-title p{
+      margin-top:6px;
+      color:var(--muted);
+    }
+
+    .card{
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+    }
+
+    .hero{padding:26px}
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:150px 1fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .avatar{
+      width:150px;
+      height:150px;
+      border-radius:28px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(135deg, rgba(96,165,250,.18), rgba(15,23,42,.6));
+    }
+
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .name-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    .name-row h2{
+      font-size:30px;
+      font-weight:800;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .badge.premium{
+      background:rgba(251,191,36,.13);
+      color:#fde68a;
+      border:1px solid rgba(251,191,36,.2);
+    }
+
+    .badge.regular{
+      background:rgba(148,163,184,.12);
+      color:#dbe7f7;
+      border:1px solid rgba(148,163,184,.16);
+    }
+
+    .summary{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .summary-item,
+    .detail,
+    .section-card{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:18px;
+    }
+
+    .summary-item{padding:14px 16px}
+
+    .summary-label,
+    .detail-label{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .summary-value,
+    .detail-value{
+      font-size:15px;
+      font-weight:600;
+      color:var(--text);
+      word-break:break-word;
+      line-height:1.5;
+    }
+
+    .metrics-row{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      margin-top:22px;
+    }
+
+    .stat-box{padding:18px;border:1px solid rgba(148,163,184,.12);border-radius:18px;background:rgba(255,255,255,.03)}
+
+    .stat-title{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .stars{
+      font-size:28px;
+      color:var(--warning);
+      letter-spacing:3px;
+      line-height:1;
+      margin:8px 0 10px;
+    }
+
+    .rating{
+      font-size:15px;
+      font-weight:700;
+      color:#b9d4ff;
+    }
+
+    .section-card{
+      margin-top:22px;
+      padding:24px;
+    }
+
+    .section-title{
+      font-size:18px;
+      font-weight:800;
+      margin-bottom:14px;
+    }
+
+    .bio{
+      color:#c7d4e6;
+      line-height:1.9;
+      font-size:15px;
+    }
+
+    .skills{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+      margin-top:22px;
+    }
+
+    .skill-card{
+      padding:22px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:18px;
+    }
+
+    .skill-card h3{
+      margin-bottom:14px;
+      font-size:17px;
+      font-weight:800;
+    }
+
+    .teach{color:#6ee7b7}
+    .learn{color:#d8b4fe}
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .tag{
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:600;
+    }
+
+    .teach-tag{
+      background:rgba(16,185,129,.12);
+      color:#86efac;
+      border:1px solid rgba(16,185,129,.2);
+    }
+
+    .learn-tag{
+      background:rgba(168,85,247,.12);
+      color:#d8b4fe;
+      border:1px solid rgba(168,85,247,.2);
+    }
+
+    .connections-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:14px;
+      margin-top:22px;
+    }
+
+    .connection-card{
+      padding:16px;
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:16px;
+      background:rgba(255,255,255,.03);
+    }
+
+    .connection-head{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    .connection-title{
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .connection-meta{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .connection-grid{
+      display:grid;
+      grid-template-columns:88px 1fr;
+      gap:12px;
+      align-items:start;
+      margin-top:10px;
+    }
+
+    .connection-avatar{
+      width:88px;
+      height:88px;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+    }
+
+    .connection-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .connection-line{
+      color:#dbe7f7;
+      line-height:1.45;
+      font-size:13px;
+    }
+
+    .empty-state{
+      color:var(--muted);
+      font-size:14px;
+      padding:8px 0 0;
+    }
+
+    @media (max-width: 1100px){
+      .connections-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px){
+      body{padding:16px}
+      .hero-grid,.summary,.metrics-row,.skills,.connection-grid{
+        grid-template-columns:1fr
+      }
+      .connections-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 640px){
+      .avatar{width:120px;height:120px}
+      .name-row h2{font-size:25px}
+      .page-title h1{font-size:26px}
+      .connection-avatar{width:100%;height:220px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+
+  <a href="{% url 'usermanagement' %}" class="back-btn">← Back to User Management</a>
+
+      <div class="page-title">
+        <h1>User Profile</h1>
+        <p>View complete details of the user.</p>
+      </div>
+    </div>
+    <div class="card hero">
+      <div class="hero-grid">
+        <div class="avatar">
+          {% if profile.profile_image_url %}
+            <img src="{{ profile.profile_image_url }}" alt="{{ profile.full_name }}">
+          {% else %}
+            <img src="{% static 'profile_images/default.png' %}" alt="Default profile">
+          {% endif %}
+        </div>
+
+        <div>
+          <div class="name-row">
+            <h2>{{ profile.full_name|default:"Not Available" }}</h2>
+            {% if profile.is_premium %}
+              <span class="badge premium">👑 Premium User</span>
+            {% else %}
+              <span class="badge regular">Regular User</span>
+            {% endif %}
+          </div>
+
+          <div class="summary">
+            <div class="summary-item">
+              <div class="summary-label">Email</div>
+              <div class="summary-value">{{ profile.email|default:"Not Available" }}</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Location</div>
+              <div class="summary-value">{{ profile.location|default:"Not Available" }}</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Experience</div>
+              <div class="summary-value">{{ profile.experience|default:"Not Available" }}</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">Joined On</div>
+              <div class="summary-value">{{ profile.date_joined|slice:":10"|default:"Not Available" }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="stat-box">
+          <div class="stat-title">Average Rating</div>
+          <div class="stars">{{ stars }}</div>
+          <div class="rating">{{ avg_rating }}/5</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-title">Profile Status</div>
+          <div class="rating">{% if profile.is_premium %}Premium{% else %}Regular{% endif %}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card section-card">
+      <div class="section-title">About</div>
+      <p class="bio">{{ profile.about|default:"No description added." }}</p>
+    </div>
+
+    <div class="skills">
+      <div class="skill-card">
+        <h3 class="teach">Skills to Teach</h3>
+        <div class="tags">
+          {% for skill in teach_skills %}
+            <span class="tag teach-tag">{{ skill }}</span>
+          {% empty %}
+            <span class="tag teach-tag">No skills added</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <h3 class="learn">Skills to Learn</h3>
+        <div class="tags">
+          {% for skill in learn_skills %}
+            <span class="tag learn-tag">{{ skill }}</span>
+          {% empty %}
+            <span class="tag learn-tag">No skills added</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card section-card">
+      <div class="section-title">Teaching Connections</div>
+      <div class="connections-grid">
+        {% for conn in teaching_connections %}
+          <div class="connection-card">
+            <div class="connection-head">
+              <div class="connection-title">{{ conn.skill|default:"Teaching Connection" }}</div>
+              <div class="connection-meta">{{ conn.created_at|default:"" }}</div>
+            </div>
+            <div class="connection-grid">
+              <div class="connection-avatar">
+                {% if conn.other_profile and conn.other_profile.profile_image_url %}
+                  <img src="{{ conn.other_profile.profile_image_url }}" alt="{{ conn.other_profile.full_name }}">
+                {% else %}
+                  <img src="{% static 'profile_images/default.png' %}" alt="Default profile">
+                {% endif %}
+              </div>
+              <div class="connection-details">
+                <div class="connection-line"><strong>Mentor:</strong> {{ profile.full_name }}</div>
+                <div class="connection-line"><strong>Learner:</strong> {{ conn.other_profile.full_name|default:"Not Available" }}</div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state">No teaching connections found.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card section-card">
+      <div class="section-title">Learning Connections</div>
+      <div class="connections-grid">
+        {% for conn in learning_connections %}
+          <div class="connection-card">
+            <div class="connection-head">
+              <div class="connection-title">{{ conn.skill|default:"Learning Connection" }}</div>
+              <div class="connection-meta">{{ conn.created_at|default:"" }}</div>
+            </div>
+            <div class="connection-grid">
+              <div class="connection-avatar">
+                {% if conn.other_profile and conn.other_profile.profile_image_url %}
+                  <img src="{{ conn.other_profile.profile_image_url }}" alt="{{ conn.other_profile.full_name }}">
+                {% else %}
+                  <img src="{% static 'profile_images/default.png' %}" alt="Default profile">
+                {% endif %}
+              </div>
+              <div class="connection-details">
+                <div class="connection-line"><strong>Learner:</strong> {{ profile.full_name }}</div>
+                <div class="connection-line"><strong>Mentor:</strong> {{ conn.other_profile.full_name|default:"Not Available" }}</div>
+               
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state">No learning connections found.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card section-card">
+      <div class="section-title">Completed Connections</div>
+      <div class="connections-grid">
+        {% for conn in completed_connections %}
+          <div class="connection-card">
+            <div class="connection-head">
+              <div class="connection-title">{{ conn.skill|default:"Completed Connection" }}</div>
+              <div class="connection-meta">{{ conn.completed_at|default:"" }}</div>
+            </div>
+            <div class="connection-grid">
+              <div class="connection-avatar">
+                {% if conn.other_profile and conn.other_profile.profile_image_url %}
+                  <img src="{{ conn.other_profile.profile_image_url }}" alt="{{ conn.other_profile.full_name }}">
+                {% else %}
+                  <img src="{% static 'profile_images/default.png' %}" alt="Default profile">
+                {% endif %}
+              </div>
+              <div class="connection-details">
+                <div class="connection-line"><strong>Other User:</strong> {{ conn.other_profile.full_name|default:"Not Available" }}</div>
+                <div class="connection-line"><strong>Title:</strong> {{ conn.title|default:"Not Available" }}</div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state">No completed connections found.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,617 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works | Teach2Learn</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+
+    <style>
+        /* Page accent: How-it-works uses orange for the step timeline, blue/teal for teach/learn pills */
+        .hero{ position:relative; padding:120px 0 60px; overflow:hidden; }
+        .hero::before{
+            content:"";
+            position:absolute; inset:0;
+            background:
+                radial-gradient(650px 380px at 90% -10%, rgba(249,115,22,0.14), transparent 60%),
+                radial-gradient(600px 340px at 0% 30%, rgba(59,130,246,0.10), transparent 60%);
+            pointer-events:none;
+        }
+        .hero .container{ position:relative; }
+        .hero-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center; }
+        @media (max-width:991px){ .hero-grid{ grid-template-columns:1fr; } }
+        .hero h1{ font-size:clamp(2rem,4vw,3rem); font-weight:800; margin:16px 0; line-height:1.15; }
+        .hero p{ color:var(--text-muted); max-width:560px; font-size:1.05rem; }
+
+        .hero-points{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+        .hero-points span{
+            padding:8px 16px; border-radius:var(--radius-pill);
+            background:var(--bg-surface-2); border:1px solid var(--border-color);
+            color:var(--gray-300); font-size:.85rem; font-weight:600;
+        }
+
+        .hero-card{ padding:24px; }
+        .mini-label{ text-transform:uppercase; letter-spacing:.06em; font-size:.75rem; font-weight:700; color:var(--gray-500); }
+        .match-user{ background:var(--bg-surface-2); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px; margin-top:14px; }
+        .match-user-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+        .person{ display:flex; align-items:center; gap:12px; }
+        .avatar{ width:42px;height:42px;border-radius:50%; display:flex;align-items:center;justify-content:center; background:linear-gradient(135deg, var(--blue-500), #2563eb); color:#fff; font-weight:700; }
+        .person h3{ font-size:1rem; margin:0; }
+        .person p{ font-size:.82rem; color:var(--text-muted); margin:0; }
+
+        .pill{ display:inline-flex; align-items:center; padding:5px 12px; border-radius:var(--radius-pill); font-size:.78rem; font-weight:600; background:var(--bg-surface); border:1px solid var(--border-color); color:var(--gray-300); }
+        .pill.teach{ background:rgba(20,184,166,0.14); border-color:rgba(20,184,166,0.3); color:#5eead4; }
+        .pill.learn{ background:rgba(249,115,22,0.14); border-color:rgba(249,115,22,0.3); color:var(--orange-400); }
+        .pill-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+
+        .match-found{
+            display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+            margin-top:16px; padding:16px; border-radius:var(--radius-md);
+            background:linear-gradient(135deg, var(--orange-500), var(--orange-600)); color:#fff;
+        }
+
+        .stats-strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:48px; }
+        @media (max-width:768px){ .stats-strip{ grid-template-columns:repeat(2,1fr); } }
+        .stat-card{ background:var(--bg-surface); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:20px; text-align:center; }
+        .stat-card strong{ display:block; font-size:1.25rem; color:var(--orange-400); font-weight:800; margin-bottom:4px; }
+        .stat-card span{ color:var(--text-muted); font-size:.82rem; }
+
+        /* Roadmap timeline */
+        .roadmap-section{ position:relative; padding:20px 0 60px; }
+        .flow{ position:relative; }
+        .flow::before{
+            content:"";
+            position:absolute; left:50%; top:0; bottom:0; width:2px;
+            background:linear-gradient(180deg, transparent, var(--border-color) 8%, var(--border-color) 92%, transparent);
+            transform:translateX(-50%);
+        }
+        @media (max-width:767px){ .flow::before{ left:24px; } }
+
+        .step{ position:relative; margin-bottom:34px; }
+        .step-card{
+            position:relative;
+            background:var(--bg-surface); border:1px solid var(--border-color);
+            border-radius:var(--radius-lg); padding:26px; max-width:420px;
+            transition:transform var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease), box-shadow var(--dur-med) var(--ease);
+        }
+        .step-card:hover{ transform:translateY(-6px); border-color:rgba(249,115,22,0.35); box-shadow:var(--shadow-md); }
+        .step .right .step-card{ margin-left:30px; }
+        .step .left .step-card{ margin-left:100px; }
+        @media (max-width:767px){
+            .step .right .step-card,.step .left .step-card{ margin-left:56px; margin-right:0; max-width:none; }
+        }
+
+        .connector{
+            position:absolute; top:100px; width:20px; height:20px; border-radius:50%;margin-left:100px;
+            background:var(--orange-500); box-shadow:0 0 0 5px var(--navy-950), var(--shadow-glow-orange);
+        }
+        .step .right .connector{ left:-150px;  }
+        .step .left .connector{ right:-50px; }
+        @media (max-width:767px){
+            .step .right .connector,.step .left .connector{ left:18px; right:auto; }
+        }
+
+        .step-number{
+            display:inline-flex; align-items:center; justify-content:center;
+            width:34px;height:34px;border-radius:10px;
+            background:rgba(249,115,22,0.14); color:var(--orange-400);
+            font-weight:800; margin-bottom:14px;
+        }
+        .step-icon{
+            width:52px;height:52px;border-radius:14px;
+            display:flex;align-items:center;justify-content:center;
+            background:rgba(59,130,246,0.14); color:var(--blue-400);
+            font-size:1.3rem; margin-bottom:14px;
+        }
+        .step-card h4{ margin-bottom:8px; }
+        .step-card p{ color:var(--text-muted); font-size:.92rem; margin:0; }
+
+        /* Journey */
+        .journey-grid{ display:grid; grid-template-columns:.9fr 1.1fr; gap:28px; margin-top:36px; }
+        @media (max-width:991px){ .journey-grid{ grid-template-columns:1fr; } }
+        .journey-story,.journey-board{
+            background:var(--bg-surface); border:1px solid var(--border-color);
+            border-radius:var(--radius-lg); padding:30px;
+        }
+        .journey-story h3,.journey-board h3{ margin-bottom:10px; }
+        .journey-story p,.journey-board p{ color:var(--text-muted); font-size:.92rem; }
+        .journey-users{ margin-top:20px; display:flex; flex-direction:column; gap:14px; }
+        .journey-user{ background:var(--bg-surface-2); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px; }
+        .journey-user strong{ color:var(--text-primary); }
+        .journey-arrow{ text-align:center; color:var(--gray-500); font-size:.85rem; font-weight:600; }
+
+        .board-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:18px; }
+        @media (max-width:767px){ .board-row{ grid-template-columns:1fr; } }
+        .board-card{ background:var(--bg-surface-2); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:18px; }
+        .board-card h4{ font-size:1rem; margin:6px 0 10px; }
+        .board-card ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+        .board-card li{ display:flex; align-items:center; gap:8px; font-size:.86rem; color:var(--gray-300); }
+        .board-card .dot{ width:6px;height:6px;border-radius:50%; background:var(--orange-400); flex:0 0 auto; }
+
+        /* Support grid */
+        .support-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:36px; }
+        @media (max-width:991px){ .support-grid{ grid-template-columns:repeat(2,1fr); } }
+        @media (max-width:575px){ .support-grid{ grid-template-columns:1fr; } }
+        .support-card{
+            background:var(--bg-surface); border:1px solid var(--border-color);
+            border-radius:var(--radius-lg); padding:26px;
+            transition:transform var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease);
+        }
+        .support-card:hover{ transform:translateY(-6px); border-color:rgba(249,115,22,0.35); }
+        .support-icon{ font-size:1.8rem; margin-bottom:14px; }
+        .support-card h3{ font-size:1.05rem; margin-bottom:8px; }
+        .support-card p{ color:var(--text-muted); font-size:.88rem; margin:0; }
+
+        .cta-panel{
+            margin-top:48px; padding:40px; border-radius:var(--radius-lg);
+            background:linear-gradient(135deg, var(--navy-700), var(--navy-850));
+            border:1px solid var(--border-color);
+            display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+        }
+        .cta-copy h3{ margin-bottom:8px; }
+        .cta-copy p{ color:var(--gray-300); margin:0; max-width:480px; }
+        .cta-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg t2l-navbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand t2l-brand" href="{% url 'home' %}">
+            <span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
+            Teach2Learn
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'howitworks' %}">How it Works</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'pricing' %}">Pricing</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown ms-lg-2">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-circle-user"></i> {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end t2l-dropdown" aria-labelledby="accountDropdown">
+                        <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item ms-lg-2"><a class="btn btn-secondary-outline btn-sm px-3" href="{% url 'login_view' %}">Login</a></li>
+                <li class="nav-item ms-lg-2"><a class="btn btn-main btn-sm px-3" href="{% url 'register' %}">Create Account</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main id="main">
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div>
+                    <span class="section-eyebrow" data-reveal><i class="bi bi-diagram-3"></i> How Teach2Learn works</span>
+                    <h1 data-reveal>Exchange skills, learn faster, and grow together.</h1>
+                    <p data-reveal>
+                        Teach2Learn connects learners through a structured peer-to-peer experience:
+                        create your skill profile, get matched, schedule sessions, practice with AI,
+                        and earn proof of progress through projects, feedback, and certificates.
+                    </p>
+
+                    <div class="hero-actions d-flex flex-wrap gap-3 mt-3" data-reveal>
+                        <a href="#process" class="btn btn-main btn-lg">Explore the 5-step flow</a>
+                        <a href="#journey" class="btn btn-secondary-outline btn-lg">View example journey</a>
+                    </div>
+
+                    <div class="hero-points" data-reveal>
+                        <span>Skill exchange</span>
+                        <span>AI mock interviews</span>
+                        <span>Project-based learning</span>
+                    </div>
+                </div>
+
+                <aside class="t2l-card hero-card" data-reveal>
+                    <div class="mini-label">Live exchange preview</div>
+
+                    <div class="match-user">
+                        <div class="match-user-top">
+                            <div class="person">
+                                <div class="avatar">A</div>
+                                <div>
+                                    <h3>Ananya</h3>
+                                    <p>Frontend learner</p>
+                                </div>
+                            </div>
+                            <span class="pill teach">Teaches React</span>
+                        </div>
+                        <div class="pill-row">
+                            <span class="pill learn">Wants UI/UX</span>
+                            <span class="pill">Projects</span>
+                            <span class="pill">Sessions</span>
+                        </div>
+                    </div>
+
+                    <div class="match-user">
+                        <div class="match-user-top">
+                            <div class="person">
+                                <div class="avatar" style="background:linear-gradient(135deg, var(--orange-500), var(--orange-600));">B</div>
+                                <div>
+                                    <h3>Bhargav</h3>
+                                    <p>Product designer</p>
+                                </div>
+                            </div>
+                            <span class="pill teach">Teaches UI/UX</span>
+                        </div>
+                        <div class="pill-row">
+                            <span class="pill learn">Wants React</span>
+                            <span class="pill">Assignments</span>
+                            <span class="pill">Feedback</span>
+                        </div>
+                    </div>
+
+                    <div class="match-found">
+                        <div>
+                            <strong>Match found</strong>
+                            <div style="opacity:.85; font-size:.88rem;">React ↔ UI/UX collaborative path</div>
+                        </div>
+                        <a href="#process" class="btn btn-sm" style="background:rgba(255,255,255,.18); color:#fff;">See flow</a>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="stats-strip">
+                <article class="stat-card" data-reveal>
+                    <strong>5 steps</strong>
+                    <span>From profile creation to certification</span>
+                </article>
+                <article class="stat-card" data-reveal>
+                    <strong>1 platform</strong>
+                    <span>Matching, sessions, chat, AI, progress</span>
+                </article>
+                <article class="stat-card" data-reveal>
+                    <strong>2-way value</strong>
+                    <span>Teach one skill and learn another</span>
+                </article>
+                <article class="stat-card" data-reveal>
+                    <strong>Real outcomes</strong>
+                    <span>Projects, reviews, growth, certificates</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="roadmap-section" id="process">
+        <div class="container">
+            <div class="flow">
+
+                <div class="row step">
+                
+
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6 right">
+                        
+                        <div class="step-card text-center" data-reveal>
+                            <span class="connector"></span>
+                            <div class="step-number">1</div>
+                            <div class="step-icon mx-auto"><i class="bi bi-person-plus-fill"></i></div>
+                            <h4>Register</h4>
+                            <p>Create your account and begin your learning journey.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row step">
+                    <div class="col-md-6 left">
+                        <div class="step-card text-center" data-reveal>
+                            <span class="connector"></span>
+                            <div class="step-number">2</div>
+                            <div class="step-icon mx-auto"><i class="bi bi-person-vcard-fill"></i></div>
+                            <h4>Build Profile</h4>
+                            <p>Add your skills, goals, and learning interests.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+
+                <div class="row step">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6 right">
+                        <div class="step-card text-center" data-reveal>
+                            <span class="connector"></span>
+                            <div class="step-number">3</div>
+                            <div class="step-icon mx-auto"><i class="bi bi-search"></i></div>
+                            <h4>Find Skills</h4>
+                            <p>Search the skills you want to learn on the platform.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row step">
+                    <div class="col-md-6 left">
+                        <div class="step-card text-center" data-reveal>
+                            <span class="connector"></span>
+                            <div class="step-number">4</div>
+                            <div class="step-icon mx-auto"><i class="bi bi-people-fill"></i></div>
+                            <h4>Connect</h4>
+                            <p>Connect with mentors and skill partners.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+
+                <div class="row step">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6 right">
+                        <div class="step-card text-center" data-reveal>
+                            <span class="connector"></span>
+                            <div class="step-number">5</div>
+                            <div class="step-icon mx-auto"><i class="bi bi-camera-video-fill"></i></div>
+                            <h4>Attend Sessions</h4>
+                            <p>Join online sessions through Zoom or Google Meet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row step">
+                    <div class="col-md-6 left">
+                        <div class="step-card text-center" data-reveal>
+                            <span class="connector"></span>
+                            <div class="step-number">6</div>
+                            <div class="step-icon mx-auto"><i class="bi bi-cloud-upload-fill"></i></div>
+                            <h4>Submit Assignments</h4>
+                            <p>Upload assignments, projects, and learning resources.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+
+                <div class="row step">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6 right">
+                        <div class="step-card text-center" data-reveal>
+                            <span class="connector"></span>
+                            <div class="step-number">7</div>
+                            <div class="step-icon mx-auto"><i class="bi bi-graph-up-arrow"></i></div>
+                            <h4>Earn Certificates</h4>
+                            <p>Complete milestones and receive certificates and badges.</p>
+                        </div>
+                    </div>
+                </div>
+    </section>
+
+    <!-- Example journey -->
+    <section class="section" id="journey">
+        <div class="container">
+            <span class="section-eyebrow is-blue" data-reveal>Example journey</span>
+            <h2 class="section-title" data-reveal>How a React learner and a UI/UX learner exchange value.</h2>
+            <p class="section-subtitle" data-reveal>
+                This example shows the platform in a real-world way: two users with opposite goals meet through the system,
+                learn together, complete work, and improve through guided support.
+            </p>
+
+            <div class="journey-grid">
+                <article class="journey-story" data-reveal>
+                    <h3>Peer-to-peer skill exchange story</h3>
+                    <p>
+                        One user teaches React and wants to learn UI/UX design. Another teaches UI/UX and wants to learn React.
+                        Teach2Learn identifies the match and creates a structured collaboration path.
+                    </p>
+
+                    <div class="journey-users">
+                        <div class="journey-user">
+                            <strong>User A</strong>
+                            <div class="pill-row">
+                                <span class="pill teach">Teaches React.js</span>
+                                <span class="pill learn">Learns UI/UX</span>
+                            </div>
+                        </div>
+
+                        <div class="journey-arrow">↓ Matched through complementary goals</div>
+
+                        <div class="journey-user">
+                            <strong>User B</strong>
+                            <div class="pill-row">
+                                <span class="pill teach">Teaches UI/UX</span>
+                                <span class="pill learn">Learns React.js</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="journey-board" data-reveal>
+                    <div>
+                        <h3>What they do next</h3>
+                        <p>After the match, the platform supports each stage of collaboration through one connected workflow.</p>
+                    </div>
+
+                    <div class="board-row">
+                        <div class="board-card">
+                            <div class="mini-label">Connect</div>
+                            <h4>Plan sessions</h4>
+                            <ul>
+                                <li><span class="dot"></span><span>Share availability</span></li>
+                                <li><span class="dot"></span><span>Book a meeting slot</span></li>
+                                <li><span class="dot"></span><span>Add a meeting link</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="board-card">
+                            <div class="mini-label">Collaborate</div>
+                            <h4>Learn through work</h4>
+                            <ul>
+                                <li><span class="dot"></span><span>Exchange notes</span></li>
+                                <li><span class="dot"></span><span>Submit assignments</span></li>
+                                <li><span class="dot"></span><span>Build mini projects</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="board-card">
+                            <div class="mini-label">Improve</div>
+                            <h4>Measure growth</h4>
+                            <ul>
+                                <li><span class="dot"></span><span>Use AI mock interviews</span></li>
+                                <li><span class="dot"></span><span>Receive ratings and reviews</span></li>
+                                <li><span class="dot"></span><span>Earn a certificate</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support features -->
+    <section class="section pt-0" id="support">
+        <div class="container">
+            <span class="section-eyebrow" data-reveal>Support features</span>
+            <h2 class="section-title" data-reveal>More than matching — a full learning support system.</h2>
+            <p class="section-subtitle" data-reveal>
+                The platform is built to reduce friction after a match is created. Communication, progress tracking,
+                interview preparation, and doubt clarification are all included in the same experience.
+            </p>
+
+            <div class="support-grid">
+                <article class="support-card" data-reveal>
+                    <div class="support-icon">💬</div>
+                    <h3>Real-time chat</h3>
+                    <p>Users can discuss concepts, share files, send updates, and stay aligned between sessions.</p>
+                </article>
+
+                <article class="support-card" data-reveal>
+                    <div class="support-icon">📝</div>
+                    <h3>Assignments and notes</h3>
+                    <p>Mentors and peers can assign work, upload notes, review submissions, and provide feedback.</p>
+                </article>
+
+                <article class="support-card" data-reveal>
+                    <div class="support-icon">🤖</div>
+                    <h3>AI mock interviews</h3>
+                    <p>Skill-based practice questions and AI evaluation help users assess readiness and improve answers.</p>
+                </article>
+
+                <article class="support-card" data-reveal>
+                    <div class="support-icon">📈</div>
+                    <h3>Progress and certificates</h3>
+                    <p>Track completed sessions and assignments, then generate verified proof of learning milestones.</p>
+                </article>
+            </div>
+
+            <div class="cta-panel" id="cta" data-reveal>
+                <div class="cta-copy">
+                    <h3>Start your learning exchange journey.</h3>
+                    <p>
+                        Create a profile, add your teach and learn skills, and let the platform connect you with the right peer,
+                        mentor, or learning partner.
+                    </p>
+                </div>
+                <div class="cta-actions">
+                    <a href="{% url 'register' %}" class="btn btn-main btn-lg">Create free profile</a>
+                    <a href="{% url 'howitworks' %}" class="btn btn-secondary-outline btn-lg">View skill matches</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer Section -->
+<footer class="footer-section text-white pt-5 pb-3">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-reveal>
+                <h3 class="fw-bold mb-3">
+                    <i class="bi bi-mortarboard-fill me-2" style="color:var(--orange-400);"></i>Teach2Learn
+                </h3>
+                <p class="text-light" style="color:var(--gray-400) !important;">
+                    Learn, Teach, Connect, and Grow together. Empowering learners
+                    and mentors through skill exchange, live sessions, assignments,
+                    certifications, and collaborative learning.
+                </p>
+                <div class="social-icons mt-4">
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <a href="#"><i class="bi bi-github"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
+                    <li><a href="{% url 'howitworks' %}">How It Works</a></li>
+                    <li><a href="{% url 'pricing' %}">Pricing</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Resources</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Sessions</a></li>
+                    <li><a href="#">Assignments</a></li>
+                    <li><a href="#">Certificates</a></li>
+                    <li><a href="#">Progress</a></li>
+                    <li><a href="#">Premium Plans</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Contact Us</h5>
+                <p><i class="bi bi-envelope-fill me-2"></i>support@teach2learn.com</p>
+                <p><i class="bi bi-telephone-fill me-2"></i>+91 98765 43210</p>
+                <p><i class="bi bi-geo-alt-fill me-2"></i>Telangana, India</p>
+
+                <div class="newsletter-box mt-4">
+                    <h6>Subscribe Newsletter</h6>
+                    <div class="input-group mt-3">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-main">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-strip text-center py-3 mb-4 mt-4">
+            <h6 class="fw-semibold mb-3">
+                <i class="bi bi-shield-check me-2" style="color:var(--orange-400);"></i>
+                Secure Payments Accepted
+            </h6>
+            <img src="{% static 'images/payment.png' %}" alt="Payment Methods" class="payment-banner img-fluid mx-auto d-block">
+        </div>
+
+        <div class="text-center mt-4 pt-3 border-top" style="border-color:var(--border-color) !important;">
+            <p class="mb-2" style="color:var(--gray-400);">© 2026 Teach2Learn. All Rights Reserved.</p>
+            <div>
+                <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                <span class="mx-2 text-muted">|</span>
+                <a href="#" class="footer-bottom-link">Terms &amp; Conditions</a>
+                <span class="mx-2 text-muted">|</span>
+                <a href="#" class="footer-bottom-link">Refund Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/animations.js' %}"></script>
+</body>
+</html>

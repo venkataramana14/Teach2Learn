@@ -1,0 +1,1364 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Connections | Teach2Learn</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --sidebar-width: 290px;
+      --sidebar-collapsed: 90px;
+
+      --bg-950: #07111f;
+      --bg-900: #0b1a30;
+      --bg-850: #102545;
+
+      --surface: rgba(11, 26, 48, 0.82);
+      --surface-2: rgba(15, 33, 61, 0.90);
+      --surface-3: rgba(255, 255, 255, 0.04);
+
+      --border: rgba(148, 163, 184, 0.16);
+      --border-strong: rgba(255, 255, 255, 0.10);
+
+      --text: #eef4ff;
+      --text-muted: #a8b7cf;
+      --text-soft: #7f91af;
+
+      --orange: #f97316;
+      --orange-2: #fb923c;
+      --blue: #3b82f6;
+      --teal: #14b8a6;
+      --amber: #f59e0b;
+      --green: #22c55e;
+      --red: #ef4444;
+
+      --shadow-sm: 0 8px 24px rgba(0, 0, 0, .18);
+      --shadow-md: 0 16px 36px rgba(0, 0, 0, .22);
+      --shadow-lg: 0 22px 60px rgba(0, 0, 0, .28);
+
+      --radius-sm: 14px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-xl: 30px;
+
+      --transition: 220ms cubic-bezier(.16,1,.3,1);
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html,body{ min-height:100%; }
+    body{
+      font-family:'Satoshi','Segoe UI',sans-serif;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(249,115,22,.16), transparent 20%),
+        radial-gradient(circle at 85% 15%, rgba(59,130,246,.14), transparent 22%),
+        radial-gradient(circle at 85% 85%, rgba(20,184,166,.08), transparent 18%),
+        linear-gradient(135deg, var(--bg-950), var(--bg-900) 48%, var(--bg-850));
+      background-attachment: fixed;
+    }
+
+    a{ text-decoration:none; }
+    img{ display:block; max-width:100%; }
+
+    .glass-card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow-md);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+    }
+
+    .dashboard-layout{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      gap:24px;
+      padding:24px;
+      align-items:start;
+    }
+
+    .sidebar{
+      position:sticky;
+      top:24px;
+      min-height:calc(100vh - 48px);
+      padding:20px;
+      transition:width .35s ease, transform .35s ease;
+      width:var(--sidebar-width);
+      overflow:hidden;
+    }
+
+    .sidebar.collapsed{
+      width:var(--sidebar-collapsed);
+      min-width:var(--sidebar-collapsed);
+    }
+
+    .sidebar-inner{
+      display:flex;
+      flex-direction:column;
+      height:100%;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:2px;
+      padding:14px;
+      border-radius:20px;
+      margin-bottom:18px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid var(--border-strong);
+    }
+
+    .brand-mark{
+      width:50px;
+      height:50px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 14px 30px rgba(249,115,22,.28);
+      flex-shrink:0;
+    }
+
+    .brand-title{
+      font-size:1.15rem;
+      font-weight:900;
+      margin:0;
+      color:var(--text);
+    }
+
+    .brand-subtitle{
+      color:var(--text-muted);
+      font-size:12px;
+      font-weight:600;
+    }
+
+    .menu-label{
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--text-soft);
+      padding:12px 12px 8px;
+    }
+
+    .sidebar-nav{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .sidebar .nav-link{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-height:48px;
+      padding:12px 14px;
+      border-radius:16px;
+      color:var(--text-muted);
+      font-size:14px;
+      font-weight:700;
+      transition:all var(--transition);
+      border:1px solid transparent;
+    }
+
+    .sidebar .nav-link i{
+      width:18px;
+      text-align:center;
+      flex-shrink:0;
+    }
+
+    .sidebar .nav-link:hover{
+      color:#fff;
+      background:rgba(255,255,255,0.05);
+      border-color:rgba(255,255,255,0.08);
+      transform:translateX(3px);
+    }
+
+    .sidebar .nav-link.active{
+      color:#fff;
+      background:linear-gradient(135deg, rgba(249,115,22,.95), rgba(37,99,235,.86));
+      box-shadow:0 14px 28px rgba(249,115,22,.22);
+    }
+
+    .chat-link small{
+      margin-left:auto;
+      max-width:95px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-size:11px;
+      opacity:.8;
+    }
+
+    .upgrade-card{
+      margin-top:auto;
+      padding:20px 16px;
+      border-radius:22px;
+      text-align:center;
+      background:linear-gradient(180deg, rgba(249,115,22,.12), rgba(59,130,246,.08));
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:var(--shadow-sm);
+    }
+
+    .upgrade-icon{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      margin:0 auto 12px;
+      color:#fff;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 12px 24px rgba(249,115,22,.24);
+    }
+
+    .btn-t2l{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      min-height:46px;
+      padding:0 18px;
+      border:none;
+      border-radius:14px;
+      font-size:14px;
+      font-weight:800;
+      color:#fff;
+      transition:all var(--transition);
+    }
+
+    .btn-main{
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 12px 28px rgba(249,115,22,.24);
+    }
+
+    .btn-soft{
+      background:linear-gradient(135deg, #2563eb, #3b82f6);
+      box-shadow:0 12px 28px rgba(59,130,246,.18);
+    }
+
+    .btn-t2l:hover{
+      color:#fff;
+      transform:translateY(-2px);
+    }
+
+    .main-panel{
+      display:flex;
+      flex-direction:column;
+      gap:24px;
+      min-width:0;
+    }
+
+    .topbar{
+      border-radius:28px;
+      padding:18px 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .topbar-left h1{
+      font-size:clamp(1.45rem, 1.2rem + 0.8vw, 2rem);
+      font-weight:900;
+      margin-bottom:4px;
+      color:var(--text);
+    }
+
+    .topbar-left p{
+      margin:0;
+      color:var(--text-muted);
+      font-size:14px;
+    }
+
+    .topbar-right{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .toggle-btn{
+      width:50px;
+      height:50px;
+      border:none;
+      border-radius:15px;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      color:#fff;
+      cursor:pointer;
+      font-size:20px;
+      transition:all var(--transition);
+    }
+
+    .toggle-btn:hover{ transform:scale(1.04); }
+
+    .icon-btn{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--text);
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      transition:all var(--transition);
+      position:relative;
+    }
+
+    .icon-btn:hover{
+      transform:translateY(-2px);
+      color:#fff;
+      background:rgba(255,255,255,0.08);
+    }
+
+    .status-pill{
+      min-height:48px;
+      padding:10px 14px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+    }
+
+    .user-chip{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      min-height:56px;
+      border-radius:18px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .user-chip img{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      object-fit:cover;
+      border:2px solid rgba(255,255,255,0.18);
+    }
+
+    .user-info{
+      display:flex;
+      flex-direction:column;
+      line-height:1.2;
+    }
+
+    .user-name{ font-size:14px; font-weight:800; color:var(--text); }
+    .user-email{
+      font-size:12px;
+      color:var(--text-muted);
+      max-width:180px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:20px;
+    }
+
+    .stat-card{
+      border-radius:26px;
+      padding:22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      min-height:128px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .stat-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), transparent);
+      pointer-events:none;
+    }
+
+    .stat-card small{
+      display:block;
+      margin-bottom:8px;
+      color:var(--text-muted);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .stat-card h3{
+      margin:0;
+      font-size:clamp(1.7rem, 1.4rem + 1vw, 2.2rem);
+      font-weight:900;
+      line-height:1;
+      color:#fff;
+    }
+
+    .stat-icon{
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      font-size:18px;
+      flex-shrink:0;
+    }
+
+    .bg-primary-soft{ background:linear-gradient(135deg, var(--orange), var(--orange-2)); }
+    .bg-info-soft{ background:linear-gradient(135deg, #2563eb, #3b82f6); }
+    .bg-success-soft{ background:linear-gradient(135deg, #16a34a, #22c55e); }
+    .bg-warning-soft{ background:linear-gradient(135deg, #d97706, #f59e0b); }
+
+    .content-grid{
+    display: grid;
+    grid-template-columns: 100%;
+    gap: 24px;
+}
+
+    .section-card{
+      border-radius:28px;
+      padding:22px;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-md);
+  
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:16px;
+      font-size:18px;
+      font-weight:900;
+      color:#fff;
+    }
+
+    .section-title i{ color:var(--orange); }
+
+    .page-header{
+      border-radius:26px;
+      padding:22px 24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .interview-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(249,115,22,0.10);
+      border:1px solid rgba(249,115,22,0.16);
+      color:#fdba74;
+      font-weight:800;
+      font-size:13px;
+      margin-bottom:12px;
+    }
+
+    .hero-title{
+      font-size:clamp(1.35rem, 1.1rem + 0.8vw, 2rem);
+      font-weight:900;
+      margin-bottom:6px;
+      color:#fff;
+    }
+
+    .hero-subtitle{
+      margin-bottom:0;
+      color:var(--text-muted);
+    }
+
+    .stat-strip{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .stat-chip{
+      min-width:150px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:20px;
+      padding:16px;
+      box-shadow:var(--shadow-sm);
+      color:var(--text);
+    }
+
+    .stat-chip small{
+      display:block;
+      color:var(--text-muted);
+      margin-bottom:5px;
+      font-weight:700;
+    }
+
+    .stat-chip strong{
+      font-size:1rem;
+      color:#fff;
+      font-weight:900;
+    }
+
+    .tab-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:22px;
+    }
+
+    .tab-row .nav-link{
+      border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.04);
+      color:var(--text-muted);
+      font-weight:700;
+      border-radius:999px;
+      padding:10px 16px;
+    }
+
+    .tab-row .nav-link.active{
+      background:linear-gradient(135deg, #f97316, #3b82f6);
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 10px 22px rgba(249,115,22,.18);
+    }
+
+    .section-title-plain{
+      font-size:1.1rem;
+      font-weight:800;
+      margin:0 0 16px;
+      color:#fff;
+    }
+
+    .connection-card{
+      height:100%;
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:22px;
+      background:rgba(255,255,255,0.04);
+      transition:0.25s ease;
+      overflow:hidden;
+      box-shadow:0 12px 30px rgba(0,0,0,0.12);
+    }
+
+    .connection-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 24px 54px rgba(0,0,0,0.18);
+      border-color:rgba(249,115,22,0.18);
+    }
+
+    .connection-card .card-body{ padding:20px; }
+
+    .row-header{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:14px;
+    }
+
+    .name-block h5{
+      margin:0;
+      color:#fff;
+      font-weight:800;
+      word-break:break-word;
+    }
+
+    .name-block small{ color:var(--text-muted); }
+
+    .skill-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:0.85rem;
+      font-weight:700;
+      margin:0 8px 8px 0;
+      background:rgba(249,115,22,0.12);
+      color:#fdba74;
+      border:1px solid rgba(249,115,22,0.14);
+    }
+
+    .meta-text{
+      color:var(--text-muted);
+      font-size:0.95rem;
+      margin-bottom:14px;
+    }
+
+    .action-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .btn-glass{
+      border-radius:12px;
+      font-weight:700;
+      padding:10px 14px;
+      border:none;
+    }
+
+    .btn-outline-glass{
+      border:1px solid rgba(255,255,255,0.08);
+      color:#fff;
+      background:rgba(255,255,255,0.04);
+    }
+
+    .btn-outline-glass:hover{
+      background:rgba(249,115,22,0.10);
+      color:#fff;
+    }
+
+    .empty-state{
+      background:rgba(255,255,255,0.04);
+      border:1px dashed rgba(255,255,255,0.12);
+      color:var(--text-muted);
+      border-radius:18px;
+      padding:18px;
+    }
+
+    .completed-card{
+      background:linear-gradient(145deg, rgba(15,33,61,.96), rgba(11,26,48,.92));
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:0 12px 28px rgba(0,0,0,0.14);
+    }
+
+    .completed-card .completed-score{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(20,184,166,0.12);
+      color:#99f6e4;
+      font-weight:700;
+    }
+
+    .footer-glass{
+      margin:0 24px 24px;
+      border-radius:30px;
+      padding:28px 26px;
+      color:#fff;
+      background:rgba(4, 10, 19, 0.72);
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:var(--shadow-lg);
+    }
+
+    .footer-glass p{ color:rgba(232,238,250,0.88); }
+    .footer-links li{ margin-bottom:10px; }
+
+    .footer-links a,
+    .footer-bottom-link{
+      color:#dbe7fb;
+      text-decoration:none;
+      transition:all var(--transition);
+    }
+
+    .footer-links a:hover,
+    .footer-bottom-link:hover{ color:#fb923c; }
+
+    .social-icons a{
+      width:44px;
+      height:44px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      margin-right:10px;
+      border-radius:50%;
+      color:#fff;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.08);
+      transition:all var(--transition);
+    }
+
+    .social-icons a:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,0.1);
+    }
+
+    .newsletter-box .form-control{
+      border:none;
+      min-height:46px;
+      border-radius:14px 0 0 14px;
+      background:rgba(255,255,255,0.94);
+      color:#111827;
+    }
+
+    .newsletter-box .btn{
+      border:none;
+      border-radius:0 14px 14px 0;
+      min-height:46px;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      font-weight:800;
+    }
+
+    .payment-strip{
+      margin-top:24px;
+      padding:18px;
+      text-align:center;
+      border-radius:20px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .payment-banner{
+      max-width:280px;
+      height:auto;
+      margin:0 auto;
+    }
+
+    .sidebar.collapsed .brand-title,
+    .sidebar.collapsed .brand-subtitle,
+    .sidebar.collapsed .menu-label,
+    .sidebar.collapsed .nav-link span,
+    .sidebar.collapsed .chat-link small{
+      display:none;
+    }
+    
+
+        .sidebar.collapsed .brand-mark{
+      width:30px;
+      height:30px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 14px 30px rgba(249,115,22,.28);
+      flex-shrink:0;
+    }
+    .sidebar.collapsed .brand,
+    .sidebar.collapsed .nav-link{
+      justify-content:center;
+    }
+
+    .sidebar.collapsed .upgrade-card{
+      display:none;
+    }
+
+    @media (max-width:1200px){
+      .stats-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+      .content-grid{ grid-template-columns:1fr; }
+    }
+
+    @media (max-width:991px){
+      .dashboard-layout{ grid-template-columns:1fr; }
+      .sidebar{
+        position:relative;
+        top:0;
+        min-height:auto;
+        width:100%;
+      }
+    }
+
+    @media (max-width:767px){
+      .dashboard-layout{ padding:16px; gap:16px; }
+      .topbar{ padding:16px; }
+      .topbar-right{ width:100%; justify-content:flex-start; }
+      .user-chip{ width:100%; }
+      .stats-grid{ grid-template-columns:1fr; }
+      .stat-chip{ min-width:100%; }
+      .footer-glass{ margin:0 16px 16px; padding:22px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; animation:none !important; transition:none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard-layout">
+  <aside class="sidebar glass-card" id="sidebar">
+    <div class="sidebar-inner">
+      <div class="brand">
+        <div class="brand-mark">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="brand-copy">
+          <h5 class="brand-title">Teach2Learn</h5>
+          <small class="brand-subtitle">Skill Exchange Hub</small>
+        </div>
+      </div>
+
+      <div class="menu-label">Main Menu</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="{% url 'dashboard' %}">
+          <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="{% url 'profile' %}">
+          <i class="fa-solid fa-user"></i><span>Profile</span>
+        </a>
+        <a class="nav-link" href="{% url 'matches' %}">
+          <i class="fa-solid fa-heart"></i><span>Matches</span>
+        </a>
+        <a class="nav-link active" href="{% url 'my_connections' %}">
+          <i class="fas fa-user-friends"></i><span>My Connections</span>
+        </a>
+        <a class="nav-link" href="{% url 'sessions' %}">
+          <i class="fa-solid fa-calendar-days"></i><span>Sessions</span>
+        </a>
+        <a class="nav-link" href="{% url 'notifications' %}">
+          <i class="fa-solid fa-bell"></i><span>Notifications</span>
+        </a>
+        <a class="nav-link" href="{% url 'interview' %}">
+          <i class="fa-solid fa-robot"></i><span>AI Interview</span>
+        </a>
+        <a class="nav-link" href="{% url 'certifications' %}">
+          <i class="fa-solid fa-certificate"></i><span>Certificates</span>
+        </a>
+      </nav>
+
+      {% if connected_users %}
+      <div class="menu-label mt-4">Chats</div>
+      <nav class="sidebar-nav">
+        {% for c in connected_users %}
+        <a class="nav-link chat-link" href="{% url 'chat_with_user' c.connected_user.email %}">
+          <i class="fa-solid fa-comments"></i>
+          <span>Chat</span>
+          <small>{{ c.connected_user.email }}</small>
+        </a>
+        {% endfor %}
+      </nav>
+      {% endif %}
+
+      <div class="menu-label mt-4">Account</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="{% url 'home' %}">
+          <i class="fa-solid fa-circle-arrow-left"></i><span>Back To Home</span>
+        </a>
+        <a class="nav-link" href="{% url 'logout' %}">
+          <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+        </a>
+        <a class="nav-link" href="{% url 'contact' %}">
+          <i class="fa-solid fa-headset"></i><span>Help & Support</span>
+        </a>
+      </nav>
+
+      <div class="upgrade-card">
+        <div class="upgrade-icon">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <h6 class="fw-bold mb-1">Upgrade to Pro</h6>
+        <p class="small text-warning mb-3">Unlock premium mentoring tools and faster connections.</p>
+        <a href="{% url 'pricing' %}" class="btn-t2l btn-main">Upgrade Now</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-panel" id="dashboardMain">
+    <section class="topbar glass-card">
+      <button id="toggleSidebar" class="toggle-btn">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div class="topbar-left">
+        <!-- <h1>My Connections</h1>
+        <p>Manage your teaching, learning, and completed mentorship connections in one place</p> -->
+      </div>
+
+      <div class="topbar-right">
+        <a href="{% url 'notifications' %}?mark_read=1" class="icon-btn position-relative" onclick="markNotificationsAsRead(event)">
+          <i class="fa-regular fa-bell"></i>
+          {% if notification_count > 0 %}
+          <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle" id="notificationCount">{{ notification_count }}</span>
+          {% endif %}
+        </a>
+
+        <div class="status-pill">
+          {% if user.profile.is_premium %}
+            <i class="fa-solid fa-crown text-warning"></i><span>Premium</span>
+          {% else %}
+            <i class="fa-regular fa-user"></i><span>Free Plan</span>
+          {% endif %}
+        </div>
+
+        <div class="user-chip">
+          {% if user.profile.profile_image %}
+            <img src="{{ user.profile.profile_image.url }}" alt="Profile picture">
+          {% else %}
+            <img src="{% static 'images/default-avatar.png' %}" alt="Default avatar">
+          {% endif %}
+          <div class="user-info">
+            <div class="user-name">{{ user.username }}</div>
+            <div class="user-email">{{ user.email }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="glass-card stat-card">
+        <div>
+          <small><i class="fa-solid fa-chalkboard-user me-1"></i>Teaching</small>
+          <h3>{{ teaching_connections|length }}</h3>
+        </div>
+        <div class="stat-icon bg-info-soft"><i class="fa-solid fa-graduation-cap"></i></div>
+      </div>
+
+      <div class="glass-card stat-card">
+        <div>
+          <small><i class="fa-solid fa-book-open-reader me-1"></i>Learning</small>
+          <h3>{{ learning_connections|length }}</h3>
+        </div>
+        <div class="stat-icon bg-success-soft"><i class="fa-solid fa-book"></i></div>
+      </div>
+
+      <div class="glass-card stat-card">
+        <div>
+          <small><i class="fa-solid fa-circle-check me-1"></i>Completed</small>
+          <h3>{{ completed_connections|length }}</h3>
+        </div>
+        <div class="stat-icon bg-warning-soft"><i class="fa-solid fa-handshake"></i></div>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <div class="section-card">
+        <div class="page-header">
+          <div>
+            <div class="interview-pill">
+              <i class="fa-solid fa-user-group"></i>
+              Connections Center
+            </div>
+            <h1 class="hero-title">{{ request.user.username }}</h1>
+            <p class="hero-subtitle">
+              Manage your teaching, learning, and completed mentorship connections in one dashboard.
+            </p>
+          </div>
+
+          <!-- <div class="d-flex gap-2 flex-wrap">
+            <span class="stat-chip"><i class="fa-solid fa-user-group me-2"></i> Mentorship Hub</span>
+            <span class="stat-chip"><i class="fa-solid fa-comments me-2"></i> Live Chat</span>
+            <span class="stat-chip"><i class="fa-solid fa-bolt me-2"></i> Fast Access</span>
+          </div> -->
+        </div>
+
+        <ul class="nav nav-pills tab-row mt-4" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#teaching" type="button">Teaching</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#learning" type="button">Learning</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#completed" type="button">Completed</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="teaching">
+            <div class="section-title-plain">Teaching Connections</div>
+            <div class="row row-cols-1 row-cols-xl-2 g-4">
+              {% for conn in teaching_connections %}
+              {% with profile=conn.other_profile %}
+              <div class="col">
+                <div class="card connection-card">
+                  <div class="card-body">
+                    <div class="row-header">
+                      <div class="name-block">
+                        <h5>{{ profile.full_name|default:conn.learner_email }}</h5>
+                        <small>Learner</small>
+                      </div>
+                      <span class="skill-pill"><i class="fa-solid fa-graduation-cap"></i> Teaching</span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                      {% if profile and profile.profile_image_url %}
+                        <img src="{{ profile.profile_image_url }}" alt="{{ profile.full_name }}" style="width:62px;height:62px;border-radius:50%;object-fit:cover;">
+                      {% else %}
+                        <img src="{% static 'profile_images/default.png' %}" alt="Default profile" style="width:62px;height:62px;border-radius:50%;object-fit:cover;">
+                      {% endif %}
+                      <div>
+                        <div class="meta-text mb-1"><i class="fa-regular fa-envelope me-1"></i>{{ profile.email|default:conn.learner_email }}</div>
+                        <div class="meta-text mb-0"><i class="fa-solid fa-briefcase me-1"></i>{{ profile.professional_title|default:"No title" }}</div>
+                      </div>
+                    </div>
+
+                    <div class="mb-2">
+                      <span class="skill-pill"><i class="fa-solid fa-screwdriver-wrench"></i> {{ conn.skill }}</span>
+                    </div>
+
+                    <div class="mb-3">
+                      <div class="mb-2">
+                        <strong class="text-white">Can Teach:</strong>
+                        {% if profile.teach_skills %}
+                          <div class="d-flex flex-wrap gap-2 mt-2">
+                            {% for skill in profile.teach_skills %}
+                              <span class="skill-pill">{{ skill }}</span>
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          <span class="meta-text">-</span>
+                        {% endif %}
+                      </div>
+
+                      <div>
+                        <strong class="text-white">Want to Learn:</strong>
+                        {% if profile.learn_skills %}
+                          <div class="d-flex flex-wrap gap-2 mt-2">
+                            {% for skill in profile.learn_skills %}
+                              <span class="skill-pill">{{ skill }}</span>
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          <span class="meta-text">-</span>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="meta-text mb-1"><i class="fa-regular fa-calendar me-1"></i>Connected: {{ conn.created_at|slice:":10" }}</div>
+                    <div class="meta-text mb-0"><i class="fa-solid fa-location-dot me-1"></i>{{ profile.location|default:"Not specified" }}</div>
+
+                    <div class="mt-3">
+                      <div class="meta-text mb-1"><strong>Experience:</strong> {{ profile.experience|default:"-" }}</div>
+                    </div>
+
+                    <div class="action-row mt-3">
+                      {% if conn.other_profile_id %}
+                        <a href="{% url 'member_profile1' conn.other_profile_id %}" class="btn btn-outline-glass btn-glass">
+                          <i class="fa-regular fa-user me-1"></i>View Profile
+                        </a>
+                      {% endif %}
+                      <a href="{% url 'chat_with_user' conn.learner_email %}" class="btn btn-glass-primary text-light btn-glass">
+                        <i class="fa-regular fa-message me-1"></i>Chat
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endwith %}
+              {% empty %}
+              <div class="col">
+                <div class="empty-state">No teaching connections found.</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="learning">
+            <div class="section-title-plain">Learning Connections</div>
+            <div class="row row-cols-1 row-cols-xl-2 g-4">
+              {% for conn in learning_connections %}
+              {% with profile=conn.other_profile %}
+              <div class="col">
+                <div class="card connection-card">
+                  <div class="card-body">
+                    <div class="row-header">
+                      <div class="name-block">
+                        <h5>{{ profile.full_name|default:conn.mentor_email }}</h5>
+                        <small>Mentor</small>
+                      </div>
+                      <span class="skill-pill"><i class="fa-solid fa-book"></i> Learning</span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                      {% if profile and profile.profile_image_url %}
+                        <img src="{{ profile.profile_image_url }}" alt="{{ profile.full_name }}" style="width:62px;height:62px;border-radius:50%;object-fit:cover;">
+                      {% else %}
+                        <img src="{% static 'profile_images/default.png' %}" alt="Default profile" style="width:62px;height:62px;border-radius:50%;object-fit:cover;">
+                      {% endif %}
+                      <div>
+                        <div class="meta-text mb-1"><i class="fa-regular fa-envelope me-1"></i>{{ profile.email|default:conn.mentor_email }}</div>
+                        <div class="meta-text mb-0"><i class="fa-solid fa-briefcase me-1"></i>{{ profile.professional_title|default:"No title" }}</div>
+                      </div>
+                    </div>
+
+                    <div class="mb-2">
+                      <span class="skill-pill"><i class="fa-solid fa-tag"></i> {{ conn.skill }}</span>
+                    </div>
+
+                    <div class="mb-3">
+                      <div class="mb-2">
+                        <strong class="text-white">Can Teach:</strong>
+                        {% if profile.teach_skills %}
+                          <div class="d-flex flex-wrap gap-2 mt-2">
+                            {% for skill in profile.teach_skills %}
+                              <span class="skill-pill">{{ skill }}</span>
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          <span class="meta-text">-</span>
+                        {% endif %}
+                      </div>
+
+                      <div>
+                        <strong class="text-white">Want to Learn:</strong>
+                        {% if profile.learn_skills %}
+                          <div class="d-flex flex-wrap gap-2 mt-2">
+                            {% for skill in profile.learn_skills %}
+                              <span class="skill-pill">{{ skill }}</span>
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          <span class="meta-text">-</span>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="meta-text mb-1"><i class="fa-regular fa-calendar me-1"></i>Connected: {{ conn.created_at|slice:":10" }}</div>
+                    <div class="meta-text mb-0"><i class="fa-solid fa-location-dot me-1"></i>{{ profile.location|default:"Not specified" }}</div>
+
+                    <div class="mt-3">
+                      <div class="meta-text mb-1"><strong>Experience:</strong> {{ profile.experience|default:"-" }}</div>
+                    </div>
+
+                    <div class="action-row mt-3">
+                      {% if conn.other_profile_id %}
+                        <a href="{% url 'member_profile1' conn.other_profile_id %}" class="btn btn-outline-glass btn-glass">
+                          <i class="fa-regular fa-user me-1"></i>View Profile
+                        </a>
+                      {% else %}
+                        <span class="btn btn-outline-glass btn-glass disabled">
+                          <i class="fa-regular fa-user me-1"></i>No Profile
+                        </span>
+                      {% endif %}
+                      <a href="{% url 'chat_with_user' conn.mentor_email %}" class="btn btn-glass-primary text-white btn-glass">
+                        <i class="fa-regular fa-message me-1"></i>Chat
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endwith %}
+              {% empty %}
+              <div class="col">
+                <div class="empty-state">No learning connections found.</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="completed">
+            <div class="section-title-plain">Completed Connections</div>
+            <div class="row row-cols-1 row-cols-xl-2 g-4">
+              {% for conn in completed_connections %}
+              {% with profile=conn.other_profile %}
+              <div class="col">
+                <div class="card connection-card completed-card">
+                  <div class="card-body">
+                    <div class="row-header">
+                      <div class="name-block">
+                        <h5>{{ profile.full_name|default:conn.mentor_email|default:conn.learner_email }}</h5>
+                        <small>Completed mentorship</small>
+                      </div>
+                      <span class="skill-pill"><i class="fa-solid fa-circle-check"></i> Done</span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                      {% if profile and profile.profile_image_url %}
+                        <img src="{{ profile.profile_image_url }}" alt="{{ profile.full_name }}" style="width:62px;height:62px;border-radius:50%;object-fit:cover;">
+                      {% else %}
+                        <img src="{% static 'profile_images/default.png' %}" alt="Default profile" style="width:62px;height:62px;border-radius:50%;object-fit:cover;">
+                      {% endif %}
+                      <div>
+                        <div class="meta-text mb-1"><i class="fa-regular fa-envelope me-1"></i>{{ profile.email|default:conn.mentor_email|default:conn.learner_email }}</div>
+                        <div class="meta-text mb-0"><i class="fa-solid fa-briefcase me-1"></i>{{ profile.professional_title|default:"No title" }}</div>
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                      <span class="skill-pill">Can Teach: {% if profile.teach_skills %}{{ profile.teach_skills|join:", " }}{% else %}-{% endif %}</span>
+                      <span class="skill-pill">Want to Learn: {% if profile.learn_skills %}{{ profile.learn_skills|join:", " }}{% else %}-{% endif %}</span>
+                    </div>
+
+                    <p class="meta-text mb-2">
+                      <span class="completed-score">Rating: {{ conn.rating|default:"-" }}</span>
+                    </p>
+                    <p class="meta-text mb-2">
+                      <i class="fa-regular fa-calendar-check me-1"></i>Completed Teach Skill: {{ conn.skill|default:"-" }}
+                    </p>
+                    <p class="meta-text mb-0">
+                      <i class="fa-regular fa-note-sticky me-1"></i>Review: {{ conn.review|default:"No review provided" }}
+                    </p>
+
+                    <div class="action-row mt-3">
+                      {% if conn.other_profile_id %}
+                        <a href="{% url 'member_profile1' conn.other_profile_id %}" class="btn btn-outline-glass btn-glass">
+                          <i class="fa-regular fa-user me-1"></i>View Profile
+                        </a>
+                      {% else %}
+                        <span class="btn btn-outline-glass btn-glass disabled">
+                          <i class="fa-regular fa-user me-1"></i>No Profile
+                        </span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endwith %}
+              {% empty %}
+              <div class="col">
+                <div class="empty-state">No completed connections found.</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="section-card">
+        <div class="section-title"><i class="fa-solid fa-bolt"></i>Quick Actions</div>
+        <div class="d-grid gap-3">
+          <a href="{% url 'matches' %}" class="glass-card p-3 text-white d-flex align-items-center gap-3" style="border-radius:18px;">
+            <i class="fa-solid fa-magnifying-glass fa-lg text-warning"></i>
+            <div>
+              <div class="fw-bold">Find More Matches</div>
+              <small class="text-muted">Discover new teaching partners.</small>
+            </div>
+          </a>
+          <a href="{% url 'sessions' %}" class="glass-card p-3 text-white d-flex align-items-center gap-3" style="border-radius:18px;">
+            <i class="fa-solid fa-calendar-check fa-lg text-info"></i>
+            <div>
+              <div class="fw-bold">Upcoming Sessions</div>
+              <small class="text-muted">View or join scheduled meetings.</small>
+            </div>
+          </a>
+          <a href="{% url 'interview' %}" class="glass-card p-3 text-white d-flex align-items-center gap-3" style="border-radius:18px;">
+            <i class="fa-solid fa-robot fa-lg text-success"></i>
+            <div>
+              <div class="fw-bold">AI Interview</div>
+              <small class="text-muted">Practice your mentoring skills.</small>
+            </div>
+          </a>
+          <a href="{% url 'certifications' %}" class="glass-card p-3 text-white d-flex align-items-center gap-3" style="border-radius:18px;">
+            <i class="fa-solid fa-certificate fa-lg text-warning"></i>
+            <div>
+              <div class="fw-bold">Certificates</div>
+              <small class="text-muted">Check your earned badges.</small>
+            </div>
+          </a> -->
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="footer-glass">
+  <div class="container-fluid px-0">
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <h3 class="fw-bold mb-3"><i class="bi bi-mortarboard-fill me-2"></i>Teach2Learn</h3>
+        <p>Learn, Teach, Connect, and Grow together. Empowering learners and mentors through skill exchange, live sessions, assignments, certifications, and collaborative learning.</p>
+        <div class="social-icons mt-4">
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+          <a href="#"><i class="bi bi-github"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-youtube"></i></a>
+          <a href="#"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-md-6">
+        <h5 class="fw-bold mb-3">Quick Links</h5>
+        <ul class="list-unstyled footer-links">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">How It Works</a></li>
+          <li><a href="#">Skills</a></li>
+          <li><a href="{% url 'pricing' %}">Pricing</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-2 col-md-6">
+        <h5 class="fw-bold mb-3">Resources</h5>
+        <ul class="list-unstyled footer-links">
+          <li><a href="{% url 'sessions' %}">Sessions</a></li>
+          <li><a href="#">Assignments</a></li>
+          <li><a href="{% url 'certifications' %}">Certificates</a></li>
+          <li><a href="#">Progress</a></li>
+          <li><a href="{% url 'pricing' %}">Premium Plans</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <h5 class="fw-bold mb-3">Contact Us</h5>
+        <p><i class="bi bi-envelope-fill me-2"></i><a href="mailto:support@teach2learn.com" class="text-light text-decoration-none">support@teach2learn.com</a></p>
+        <p><i class="bi bi-telephone-fill me-2"></i>+91 98765 43210</p>
+        <p><i class="bi bi-geo-alt-fill me-2"></i>Telangana, India</p>
+
+        <div class="newsletter-box mt-4">
+          <h6>Subscribe Newsletter</h6>
+          <div class="input-group mt-3">
+            <input type="email" class="form-control" placeholder="Enter your email">
+            <button class="btn btn-primary">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="payment-strip">
+      <h6 class="fw-semibold mb-3"><i class="bi bi-shield-check me-2"></i>Secure Payments Accepted</h6>
+      <img src="{% static 'images/payment.png' %}" alt="Payment Methods" class="payment-banner img-fluid">
+    </div>
+
+    <div class="text-center mt-4 pt-3 border-top border-light border-opacity-10">
+      <p class="mb-2">© 2026 Teach2Learn. All Rights Reserved.</p>
+      <div>
+        <a href="#" class="footer-bottom-link">Privacy Policy</a>
+        <span class="mx-2">|</span>
+        <a href="#" class="footer-bottom-link">Terms & Conditions</a>
+        <span class="mx-2">|</span>
+        <a href="#" class="footer-bottom-link">Refund Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const topMatch = document.querySelector(".top-match");
+        if (topMatch) {
+            topMatch.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    });
+</script>
+
+<script>
+    const toggle = document.getElementById("toggleSidebar");
+    const sidebar = document.getElementById("sidebar");
+    const layout = document.querySelector(".dashboard-layout");
+
+    toggle.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+
+        if (window.innerWidth > 991) {
+            layout.style.gridTemplateColumns = sidebar.classList.contains("collapsed") ? "90px 1fr" : "290px 1fr";
+        } else {
+            layout.style.gridTemplateColumns = "1fr";
+        }
+    });
+</script>
+</body>
+</html>

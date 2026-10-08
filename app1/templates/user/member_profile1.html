@@ -1,0 +1,419 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#070b17;
+      --bg2:#0b1220;
+      --card:rgba(255,255,255,.05);
+      --border:rgba(148,163,184,.14);
+      --text:#e5eefb;
+      --muted:#94a3b8;
+      --warning:#fbbf24;
+      --shadow:0 24px 70px rgba(0,0,0,.42);
+      --radius:26px;
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Inter',sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.22), transparent 30%),
+        radial-gradient(circle at top right, rgba(16,185,129,.14), transparent 25%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      color:var(--text);
+      padding:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .container{
+      width:100%;
+      max-width:980px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:22px;
+    }
+
+    .back-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color:var(--text);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      padding:12px 16px;
+      border-radius:14px;
+      transition:.2s ease;
+      font-weight:600;
+    }
+
+    .back-btn:hover{
+      background:rgba(255,255,255,.09);
+      transform:translateY(-1px);
+    }
+
+    .page-title h1{
+      font-size:30px;
+      font-weight:800;
+      line-height:1.1;
+      color:orange !important;
+    }
+
+    .page-title p{
+      margin-top:6px;
+      color:orange !important;
+     
+    }
+
+    .profile-card{
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      overflow:hidden;
+    }
+
+    .profile-inner{
+      padding:28px;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:160px 1fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .avatar{
+      width:160px;
+      height:160px;
+      border-radius:30px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(135deg, rgba(96,165,250,.18), rgba(15,23,42,.6));
+      flex-shrink:0;
+      margin-top: 70px;
+    }
+
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .name-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    .name-row h2{
+      font-size:30px;
+      font-weight:800;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .badge.premium{
+      background:rgba(251,191,36,.13);
+      color:#fde68a;
+      border:1px solid rgba(251,191,36,.2);
+    }
+
+    .badge.regular{
+      background:rgba(148,163,184,.12);
+      color:#dbe7f7;
+      border:1px solid rgba(148,163,184,.16);
+    }
+
+    .summary{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .summary-item,
+    .stat-box,
+    .section-box,
+    .skill-card{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:18px;
+    }
+
+    .summary-item{
+      padding:14px 16px;
+      color:orange !important;
+    }
+
+    .summary-label,
+    .stat-title,
+    .detail-label{
+      font-size:13px;
+      color:orange !important;
+      margin-bottom:6px;
+    }
+
+    .summary-value,
+    .rating,
+    .detail-value{
+      font-size:15px;
+      font-weight:600;
+      color:var(--text);
+      word-break:break-word;
+      line-height:1.5;
+    }
+
+    .metrics-row{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      margin-top:22px;
+    }
+
+    .stat-box{
+      padding:18px;
+    }
+
+    .stars{
+      font-size:28px;
+      color:var(--warning);
+      letter-spacing:3px;
+      line-height:1;
+      margin:8px 0 10px;
+    }
+
+    .section-box{
+      margin-top:22px;
+      padding:24px;
+    }
+
+    .section-title{
+      font-size:18px;
+      font-weight:800;
+      margin-bottom:14px;
+      color:orange !important;
+    }
+
+    .bio{
+      color:#c7d4e6;
+      line-height:1.9;
+      font-size:15px;
+    }
+
+    .skills{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+      margin-top:22px;
+    }
+
+    .skill-card{
+      padding:22px;
+    }
+
+    .skill-card h3{
+      margin-bottom:14px;
+      font-size:17px;
+      font-weight:800;
+    }
+
+    .teach{color:#6ee7b7;}
+    .learn{color:#d8b4fe;}
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .tag{
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:600;
+    }
+
+    .teach-tag{
+      background:rgba(16,185,129,.12);
+      color:#86efac;
+      border:1px solid rgba(16,185,129,.2);
+    }
+
+    .learn-tag{
+      background:rgba(168,85,247,.12);
+      color:#d8b4fe;
+      border:1px solid rgba(168,85,247,.2);
+    }
+
+    @media (max-width: 900px){
+      body{
+        padding:16px;
+      }
+
+      .hero-grid,
+      .summary,
+      .metrics-row,
+      .skills{
+        grid-template-columns:1fr;
+      }
+
+      .avatar{
+        width:130px;
+        height:130px;
+      }
+
+      .name-row h2{
+        font-size:26px;
+      }
+
+      .page-title h1{
+        font-size:26px;
+      }
+    }
+
+    @media (max-width: 640px){
+      .profile-inner{
+        padding:20px;
+      }
+
+      .avatar{
+        width:120px;
+        height:120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <a href="{% url 'my_connections' %}" class="back-btn">← Back to My Connections</a>
+      <div class="page-title">
+        <h1 class="text-warning">User Profile</h1>
+        <p class="text-warning">View complete details of the user.</p>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <div class="profile-inner">
+        <div class="hero-grid">
+          <div class="avatar">
+            {% if profile.profile_image_url %}
+              <img src="{{ profile.profile_image_url }}" alt="{{ profile.full_name }}">
+            {% else %}
+              <img src="{% static 'profile_images/default.png' %}" alt="Default profile">
+            {% endif %}
+          </div>
+
+          <div>
+            <div class="name-row">
+              <h2>{{ profile.full_name|default:"Not Available" }}</h2>
+              {% if profile.is_premium %}
+                <span class="badge premium">👑 Premium User</span>
+              {% else %}
+                <span class="badge regular">Regular User</span>
+              {% endif %}
+            </div>
+
+            <div class="summary">
+              <div class="summary-item">
+                <div class="summary-label ">Email</div>
+                <div class="summary-value">{{ profile.email|default:"Not Available" }}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Location</div>
+                <div class="summary-value">{{ profile.location|default:"Not Available" }}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Experience</div>
+                <div class="summary-value">{{ profile.experience|default:"Not Available" }}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Joined On</div>
+                <div class="summary-value">{{ profile.date_joined|slice:":10"|default:"Not Available" }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="stat-box">
+            <div class="stat-title">Average Rating</div>
+            <div class="stars">{{ stars }}</div>
+            <div class="rating">{{ avg_rating }}/5</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-title">Profile Status</div>
+            <div class="rating">{% if profile.is_premium %}Premium{% else %}Regular{% endif %}</div>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <div class="section-title">About</div>
+          <p class="bio">{{ profile.about|default:"No description added." }}</p>
+        </div>
+
+        <div class="skills">
+          <div class="skill-card">
+            <h3 class="teach">Skills to Teach</h3>
+            <div class="tags">
+              {% for skill in teach_skills %}
+                <span class="tag teach-tag">{{ skill }}</span>
+              {% empty %}
+                <span class="tag teach-tag">No skills added</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="skill-card">
+            <h3 class="learn">Skills to Learn</h3>
+            <div class="tags">
+              {% for skill in learn_skills %}
+                <span class="tag learn-tag">{{ skill }}</span>
+              {% empty %}
+                <span class="tag learn-tag">No skills added</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

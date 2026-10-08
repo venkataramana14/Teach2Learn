@@ -1,0 +1,809 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
+    <style>
+        :root{
+            --glass-bg: rgba(255,255,255,0.10);
+            --glass-strong: rgba(255,255,255,0.15);
+            --glass-border: rgba(255,255,255,0.22);
+            --glass-shadow: 0 10px 32px rgba(0,0,0,0.20);
+            --text-main: #ffffff;
+            --text-soft: rgba(255,255,255,0.78);
+            --text-dark: #14213d;
+            --panel-light: rgba(255,255,255,0.90);
+            --panel-border: rgba(255,255,255,0.42);
+            --accent-blue: #60a5fa;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #22d3ee;
+        }
+
+        *{
+            box-sizing: border-box;
+        }
+
+        body{
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(96,165,250,0.28), transparent 24%),
+                radial-gradient(circle at top right, rgba(139,92,246,0.24), transparent 30%),
+                radial-gradient(circle at bottom left, rgba(34,211,238,0.20), transparent 26%),
+                linear-gradient(135deg, #0f172a, #1e1b4b 42%, #0f766e 100%);
+            background-attachment: fixed;
+        }
+
+        .page-shell{
+            padding: 22px;
+        }
+
+        .sidebar-panel{
+            min-height: calc(100vh - 44px);
+            position: sticky;
+            top: 22px;
+            padding: 24px 18px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(18px) saturate(145%);
+            -webkit-backdrop-filter: blur(18px) saturate(145%);
+        }
+
+        .brand-title{
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        #sidebar .nav-link{
+            color: rgba(255,255,255,0.86) !important;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid transparent;
+        }
+
+        #sidebar .nav-link i{
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        #sidebar .nav-link:hover{
+            background: rgba(255,255,255,0.14);
+            color: #ffffff !important;
+            transform: translateX(8px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+            border-color: rgba(255,255,255,0.18);
+        }
+
+        #sidebar .nav-link:hover i{
+            transform: scale(1.15);
+            color: #bfdbfe;
+        }
+
+        #sidebar .nav-link.active{
+            background: linear-gradient(135deg, rgba(96,165,250,0.28), rgba(139,92,246,0.22));
+            color: #ffffff !important;
+            box-shadow: 0 10px 26px rgba(37,99,235,0.20);
+            border-color: rgba(255,255,255,0.18);
+        }
+
+        #logout{
+            color: #fecaca !important;
+            font-size: 15px;
+        }
+
+        #logout:hover{
+            background: rgba(239,68,68,0.20) !important;
+            color: #fff !important;
+        }
+
+        .main-panel{
+            min-height: calc(100vh - 44px);
+            padding: 28px;
+            border-radius: 28px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .page-title{
+            color: #fff;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle{
+            color: var(--text-soft) !important;
+            margin-bottom: 0;
+        }
+
+        #icon{
+            color: #c4b5fd !important;
+            font-size: 30px;
+        }
+
+        .export-btn{
+            border: 1px solid rgba(255,255,255,0.18);
+            background: linear-gradient(135deg, rgba(34,197,94,0.90), rgba(16,185,129,0.88));
+            color: #fff;
+            border-radius: 14px;
+            padding: 10px 18px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(34,197,94,0.18);
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover{
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .search-card,
+        .summary-card{
+            background: var(--glass-strong);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .search-card .form-control,
+        .search-card .input-group-text{
+            border: 1px solid rgba(255,255,255,0.16);
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+        }
+
+        .search-card .form-control::placeholder{
+            color: rgba(255,255,255,0.65);
+        }
+
+        .search-card .btn-primary{
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.92), rgba(99,102,241,0.88));
+            border: none;
+        }
+
+        .summary-card .card-body{
+            text-align: center;
+            padding: 24px 18px;
+        }
+
+        .summary-card h6{
+            color: rgba(255,255,255,0.78);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .summary-card h2{
+            color: #fff;
+            font-weight: 800;
+            margin-bottom: 0;
+        }
+
+        .list-card{
+            background: rgba(255,255,255,0.88);
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            overflow: hidden;
+        }
+
+        .list-card .card-header{
+            background: rgba(255,255,255,0.50) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(15,23,42,0.08);
+            padding: 18px 22px;
+        }
+
+        .list-card .card-header h5{
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .user-state-btn{
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .user-card{
+            background: rgba(248,250,252,0.96);
+            border: 1px solid rgba(15,23,42,0.08) !important;
+            border-radius: 18px;
+            padding: 18px;
+            transition: 0.3s ease;
+        }
+
+        .user-card:hover{
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(15,23,42,0.08);
+            background: #ffffff;
+        }
+
+        .profile-avatar{
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dbeafe, #e9d5ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #2563eb;
+            flex-shrink: 0;
+        }
+
+        .user-name{
+            color: #0f172a;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .user-email,
+        .user-joined{
+            color: #64748b !important;
+        }
+
+        .form-check-input{
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+
+        .badge{
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            letter-spacing: .2px;
+        }
+
+        .btn-light.dropdown-action{
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.12);
+            border-radius: 12px;
+            color: #4338ca;
+        }
+
+        .dropdown-menu{
+            border-radius: 16px;
+            border: 1px solid rgba(15,23,42,0.08);
+            box-shadow: 0 14px 35px rgba(15,23,42,0.12);
+            padding: 8px;
+        }
+
+        .dropdown-item{
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .dropdown-item:hover{
+            background: #eef2ff;
+            color: #312e81;
+        }
+
+        .pagination .page-link{
+            border: none;
+            margin: 0 4px;
+            border-radius: 12px !important;
+            color: #fff;
+            background: rgba(255,255,255,0.10);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .pagination .page-item.active .page-link{
+            background: linear-gradient(135deg, rgba(96,165,250,0.92), rgba(139,92,246,0.88));
+            color: #fff;
+        }
+
+        .pagination .page-link:hover{
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+        }
+
+        .alert-info{
+            border: none;
+            border-radius: 16px;
+            background: rgba(59,130,246,0.12);
+            color: #1e3a8a;
+        }
+
+        .footer-section{
+            margin: 22px;
+            margin-top: 0;
+            border-radius: 28px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .footer-links li{
+            margin-bottom: 10px;
+        }
+
+        .footer-links a,
+        .footer-bottom-link{
+            text-decoration: none;
+            color: #dbeafe;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover,
+        .footer-bottom-link:hover{
+            color: #ffffff;
+            padding-left: 5px;
+        }
+
+        .social-icons a{
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 45px;
+            height: 45px;
+            margin-right: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.10);
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .social-icons a:hover{
+            background: rgba(37,99,235,0.75);
+            transform: translateY(-5px);
+        }
+
+        .newsletter-box .form-control{
+            border: none;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .newsletter-box .btn{
+            background: #2563eb;
+            border: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .payment-strip{
+            background: rgba(255,255,255,0.08);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .payment-banner{
+            max-width: 280px;
+            height: auto;
+        }
+
+        @media (max-width: 991.98px){
+            .sidebar-panel{
+                min-height: auto;
+                position: relative;
+                top: 0;
+                margin-bottom: 18px;
+            }
+
+            .main-panel{
+                padding: 20px;
+            }
+
+            .footer-section{
+                margin: 16px;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 767.98px){
+            .page-shell{
+                padding: 16px;
+            }
+
+            .main-panel{
+                border-radius: 22px;
+            }
+
+            .page-title{
+                font-size: 1.5rem;
+            }
+
+            .user-card{
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid page-shell">
+    <div class="row g-4">
+
+        <div class="col-lg-3">
+            <div class="sidebar-panel" id="sidebar">
+                <h3 class="brand-title">Teach2Learn</h3>
+
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'admindashboard' %}" class="nav-link text-white">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'usermanagement' %}" class="nav-link active text-white">
+                            <i class="bi bi-person me-2"></i> User Management
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'subscriptions' %}" class="nav-link text-white">
+                            <i class="bi bi-people me-2"></i> Subscription & Payments
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'analytics' %}" class="nav-link text-white">
+                            <i class="bi bi-calendar-event me-2"></i> Analytics & Report
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'support' %}" class="nav-link text-white">
+                            <i class="bi bi-chat-dots me-2"></i> Support & Feedback
+                        </a>
+                    </li>
+
+                    <li class="nav-item mt-4">
+                        <a href="{% url 'logout' %}" class="nav-link" id="logout">
+                            <i class="bi bi-box-arrow-right me-2 text-danger"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="main-panel">
+
+                <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h2 class="fw-bold page-title">
+                            <i class="bi bi-people-fill me-2" id="icon"></i>User Management
+                        </h2>
+                        <p class="page-subtitle">
+                            Manage all registered users.
+                        </p>
+                    </div>
+
+                    <button type="button" class="btn export-btn" onclick="exportCSV()">
+                        <i class="bi bi-download me-2"></i>
+                        Export CSV
+                    </button>
+                </div>
+
+                <div class="card search-card border-0 mb-4">
+                    <div class="card-body">
+                        <form method="GET">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-search"></i>
+                                </span>
+
+                                <input
+                                    type="text"
+                                    name="search"
+                                    value="{{ search }}"
+                                    class="form-control"
+                                    placeholder="Search users by email">
+
+                                <button class="btn btn-primary">
+                                    Search
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                     <div class="col-lg-3 col-md-6">
+                        <div class="card border-0 summary-card">
+                            <div class="card-body">
+                                <h6>Total Users</h6>
+                                <h2>{{ active_users }}</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card border-0 summary-card">
+                            <div class="card-body">
+                                <h6>Free Users</h6>
+                                <h2>{{ free_users }}</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card border-0 summary-card">
+                            <div class="card-body">
+                                <h6>Premium Users</h6>
+                                <h2>{{ premium_users }}</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                      <div class="col-lg-3 col-md-6">
+                        <div class="card border-0 summary-card">
+                            <div class="card-body">
+                                <h6>Active Users</h6>
+                                <h2>{{ total_users }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card list-card border-0">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h5 class="fw-bold mb-0">Users List</h5>
+
+                        <button class="btn btn-outline-secondary user-state-btn" disabled>
+                            <i class="bi bi-person-check me-2"></i>
+                            User Registration Enabled
+                        </button>
+                    </div>
+
+                    <div class="card-body">
+                        {% for user in users %}
+                        <div class="user-card mb-3">
+                            <div class="row align-items-center g-3">
+                                <div class="col-lg-4">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-check-input me-3" type="checkbox">
+
+                                        <div class="profile-avatar me-3">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+
+                                        <div>
+                                            <h6 class="user-name">{{ user.full_name }}</h6>
+                                            <small class="user-email">{{ user.email }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 mt-3 mt-lg-0">
+                                    {% if user.is_premium %}
+                                        <span class="badge bg-warning text-dark me-2">Premium</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary me-2">Free</span>
+                                    {% endif %}
+
+                                    {% if user.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+
+                                    <div class="small user-joined mt-2">
+                                        Joined: {{ user.date_joined|slice:":10" }}
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light dropdown-action" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                {% if user.id %}
+                                                <a href="{% url 'member_profile' user.id %}" class="dropdown-item">
+                                                    View Profile
+                                                </a>
+                                                {% else %}
+                                                <span class="dropdown-item text-muted">No Profile</span>
+                                                {% endif %}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="alert alert-info">
+                            No users found.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if page_obj.has_other_pages %}
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}">
+                                Previous
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}&search={{ search }}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}">
+                                Next
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer-section text-white pt-5 pb-3">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <h3 class="fw-bold mb-3">
+                    <i class="bi bi-mortarboard-fill me-2"></i>Teach2Learn
+                </h3>
+
+                <p class="text-light">
+                    Learn, Teach, Connect, and Grow together. Empowering learners
+                    and mentors through skill exchange, live sessions, assignments,
+                    certifications, and collaborative learning.
+                </p>
+
+                <div class="social-icons mt-4">
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <a href="#"><i class="bi bi-github"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5 class="fw-bold mb-3">Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Skills</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5 class="fw-bold mb-3">Resources</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Sessions</a></li>
+                    <li><a href="#">Assignments</a></li>
+                    <li><a href="#">Certificates</a></li>
+                    <li><a href="#">Progress</a></li>
+                    <li><a href="#">Premium Plans</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <h5 class="fw-bold mb-3">Contact Us</h5>
+
+                <p>
+                    <i class="bi bi-envelope-fill me-2"></i>
+                    support@teach2learn.com
+                </p>
+
+                <p>
+                    <i class="bi bi-telephone-fill me-2"></i>
+                    +91 98765 43210
+                </p>
+
+                <p>
+                    <i class="bi bi-geo-alt-fill me-2"></i>
+                    Telangana, India
+                </p>
+
+                <div class="newsletter-box mt-4">
+                    <h6>Subscribe Newsletter</h6>
+
+                    <div class="input-group mt-3">
+                        <input
+                            type="email"
+                            class="form-control"
+                            placeholder="Enter your email"
+                        >
+                        <button class="btn btn-primary">
+                            Subscribe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-strip text-center py-3 mb-4 mt-4">
+            <h6 class="fw-semibold mb-3">
+                <i class="bi bi-shield-check me-2"></i>
+                Secure Payments Accepted
+            </h6>
+
+            <img src="{% static 'images/payment.png' %}"
+                 alt="Payment Methods"
+                 class="payment-banner img-fluid">
+        </div>
+
+        <div class="text-center mt-4 pt-3 border-top">
+            <p class="mb-2">
+                © 2026 Teach2Learn. All Rights Reserved.
+            </p>
+
+            <div>
+                <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                <span class="mx-2">|</span>
+                <a href="#" class="footer-bottom-link">Terms & Conditions</a>
+                <span class="mx-2">|</span>
+                <a href="#" class="footer-bottom-link">Refund Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+function exportCSV() {
+    window.location.href = "{% url 'export_users_csv' %}";
+
+    setTimeout(function() {
+        window.location.href = "{% url 'usermanagement' %}";
+    }, 2000);
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

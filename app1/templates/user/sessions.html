@@ -1,0 +1,613 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sessions | Teach2Learn</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --sidebar-width: 290px;
+      --sidebar-collapsed: 90px;
+      --bg-950: #07111f;
+      --bg-900: #0b1a30;
+      --bg-850: #102545;
+      --surface: rgba(11, 26, 48, 0.82);
+      --surface-2: rgba(15, 33, 61, 0.90);
+      --border: rgba(148, 163, 184, 0.16);
+      --border-strong: rgba(255, 255, 255, 0.10);
+      --text: #eef4ff;
+      --text-muted: #a8b7cf;
+      --text-soft: #7f91af;
+      --orange: #f97316;
+      --orange-2: #fb923c;
+      --blue: #3b82f6;
+      --teal: #14b8a6;
+      --green: #22c55e;
+      --red: #ef4444;
+      --shadow-sm: 0 8px 24px rgba(0, 0, 0, .18);
+      --shadow-md: 0 16px 36px rgba(0, 0, 0, .22);
+      --shadow-lg: 0 22px 60px rgba(0, 0, 0, .28);
+      --transition: 220ms cubic-bezier(.16,1,.3,1);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%}
+    body{
+      font-family:'Satoshi','Segoe UI',sans-serif;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(249,115,22,.16), transparent 20%),
+        radial-gradient(circle at 85% 15%, rgba(59,130,246,.14), transparent 22%),
+        radial-gradient(circle at 85% 85%, rgba(20,184,166,.08), transparent 18%),
+        linear-gradient(135deg, var(--bg-950), var(--bg-900) 48%, var(--bg-850));
+      background-attachment:fixed;
+    }
+
+    a{text-decoration:none}
+    img{display:block;max-width:100%}
+    .glass{
+      background:var(--surface);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow-md);
+      backdrop-filter:blur(22px) saturate(160%);
+      -webkit-backdrop-filter:blur(22px) saturate(160%);
+    }
+
+    .dashboard-layout{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:var(--sidebar-width) 1fr;
+      gap:24px;
+      padding:24px;
+      align-items:start;
+    }
+
+    .sidebar{
+      position:sticky;
+      top:24px;
+      min-height:calc(100vh - 48px);
+      border-radius:30px;
+      padding:20px;
+      transition:width .35s ease;
+      width:var(--sidebar-width);
+      overflow:hidden;
+    }
+
+    .sidebar.collapsed{width:var(--sidebar-collapsed);min-width:var(--sidebar-collapsed)}
+    .sidebar-inner{display:flex;flex-direction:column;height:100%}
+    .brand{
+      display:flex;align-items:center;gap:2px;padding:14px;border-radius:20px;margin-bottom:18px;
+      background:rgba(255,255,255,0.04);border:1px solid var(--border-strong)
+    }
+    .brand-mark{
+      width:50px;height:50px;border-radius:16px;display:grid;place-items:center;color:#fff;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 14px 30px rgba(249,115,22,.28);flex-shrink:0
+    }
+    .brand-title{font-size:1.15rem;font-weight:900;margin:0;color:var(--text)}
+    .brand-subtitle{color:var(--text-muted);font-size:12px;font-weight:600}
+    .menu-label{
+      font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);
+      padding:12px 12px 8px
+    }
+    .sidebar-nav{display:flex;flex-direction:column;gap:8px}
+    .sidebar .nav-link{
+      display:flex;align-items:center;gap:12px;min-height:48px;padding:12px 14px;border-radius:16px;
+      color:var(--text-muted);font-size:14px;font-weight:700;transition:all var(--transition);
+      border:1px solid transparent
+    }
+    .sidebar .nav-link i{width:18px;text-align:center;flex-shrink:0}
+    .sidebar .nav-link:hover{
+      color:#fff;background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);transform:translateX(3px)
+    }
+    .sidebar .nav-link.active{
+      color:#fff;background:linear-gradient(135deg, rgba(249,115,22,.95), rgba(37,99,235,.86));
+      box-shadow:0 14px 28px rgba(249,115,22,.22)
+    }
+    .chat-link small{
+      margin-left:auto;max-width:95px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;opacity:.8
+    }
+    .upgrade-card{
+      margin-top:auto;padding:20px 16px;border-radius:22px;text-align:center;
+      background:linear-gradient(180deg, rgba(249,115,22,.12), rgba(59,130,246,.08));
+      border:1px solid rgba(255,255,255,0.08);box-shadow:var(--shadow-sm)
+    }
+    .upgrade-icon{
+      width:56px;height:56px;border-radius:18px;display:grid;place-items:center;margin:0 auto 12px;color:#fff;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));box-shadow:0 12px 24px rgba(249,115,22,.24)
+    }
+    .btn-glass-primary{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border:none;
+      border-radius:14px;font-size:14px;font-weight:800;color:#fff;background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 12px 28px rgba(249,115,22,.24);transition:all var(--transition)
+    }
+    .btn-glass-primary:hover{color:#fff;transform:translateY(-2px)}
+
+    .main-panel{display:flex;flex-direction:column;gap:24px;min-width:0}
+    .topbar{
+      border-radius:28px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap
+    }
+    .toggle-btn{
+      width:50px;height:50px;border:none;border-radius:15px;background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      color:#fff;cursor:pointer;font-size:20px;transition:all var(--transition)
+    }
+    .toggle-btn:hover{transform:scale(1.04)}
+    .topbar-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .icon-btn,.top-chip,.user-chip{
+      background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);box-shadow:var(--shadow-sm)
+    }
+    .icon-btn{
+      width:48px;height:48px;border-radius:16px;display:grid;place-items:center;position:relative;color:var(--text)
+    }
+    .icon-btn a{color:var(--text)}
+    .top-chip{
+      min-height:48px;border-radius:999px;padding:10px 14px;display:flex;align-items:center;gap:8px;color:var(--text);
+      font-size:14px;font-weight:800
+    }
+    .user-chip{
+      min-height:48px;padding:8px 12px;border-radius:18px;display:flex;align-items:center;gap:10px;white-space:nowrap
+    }
+    .user-chip img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.18)}
+    .user-chip .name{font-size:14px;font-weight:800;color:var(--text)}
+
+    .page-header,.session-form-card,.session-info-card,.card-glass{
+      border-radius:28px;padding:22px 24px
+    }
+    .page-header{
+      display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap
+    }
+    .page-title{
+      font-size:clamp(1.35rem, 1.1rem + 0.8vw, 1.9rem);font-weight:900;margin:0 0 6px;color:#fff
+    }
+    .page-subtitle{margin:0;color:var(--text-muted)}
+
+    .sessions-layout{
+      display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:start
+    }
+    .session-form-card,.session-info-card,.session-list-card{
+      border-radius:28px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-md)
+    }
+    .form-header{
+      display:flex;align-items:center;gap:14px;margin-bottom:20px
+    }
+    .form-icon{
+      width:56px;height:56px;border-radius:18px;display:grid;place-items:center;color:#fff;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));box-shadow:0 12px 24px rgba(249,115,22,.22)
+    }
+    .form-header h3,.info-block h5,.section-title{
+      color:#fff;font-weight:900;margin:0
+    }
+    .form-header p,.info-block p{color:var(--text-muted);margin:4px 0 0}
+    .form-grid{
+      display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:14px
+    }
+    .field-group{display:flex;flex-direction:column;gap:8px}
+    .field-label{font-weight:800;color:var(--text-muted);font-size:14px}
+    .field-input{
+      min-height:48px;border-radius:14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);
+      color:#fff
+    }
+    .field-input:focus{
+      background:rgba(255,255,255,0.08);border-color:rgba(249,115,22,0.35);box-shadow:0 0 0 .2rem rgba(249,115,22,.12);color:#fff
+    }
+    .helper-text{
+      margin-top:14px;padding:12px 14px;border-radius:16px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);
+      color:#cfe3ff;font-size:14px
+    }
+    .submit-wrap{margin-top:18px}
+    .submit-btn,.btn-surface{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:14px;font-weight:800;
+      transition:all var(--transition)
+    }
+    .submit-btn{
+      min-height:48px;padding:0 18px;color:#fff;background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 12px 28px rgba(249,115,22,.24)
+    }
+    .submit-btn:hover,.btn-surface:hover{transform:translateY(-2px)}
+    .session-info-card{display:flex;flex-direction:column;gap:18px}
+    .info-block{
+      padding:16px;border-radius:18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)
+    }
+    .info-list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+    .info-list-item{display:flex;gap:12px;align-items:flex-start}
+    .info-list-icon{
+      width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex-shrink:0;
+      background:rgba(249,115,22,0.10);color:#fdba74
+    }
+    .info-list-item strong{display:block;color:#fff}
+    .info-list-item span{display:block;color:var(--text-muted);font-size:14px}
+
+    .ongoing-btn,.upcoming-btn,.btn-join{
+      min-height:44px;padding:0 16px;border-radius:14px;color:#fff;font-weight:800
+    }
+    .btn-join{background:linear-gradient(135deg, #0f766e, #14b8a6)}
+    .ongoing-btn,.upcoming-btn{box-shadow:0 12px 24px rgba(20,184,166,.16)}
+
+    .session-list-card{padding:22px 24px}
+    .section-title{font-size:1.05rem;margin-bottom:16px}
+    .session-group{display:flex;flex-direction:column;gap:12px}
+    .session-item{
+      padding:16px;border-radius:18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)
+    }
+    .session-item small{color:var(--text-muted)}
+    .empty-state{
+      padding:20px;border-radius:20px;border:1px dashed rgba(255,255,255,0.12);color:var(--text-muted);text-align:center
+    }
+
+    .footer-glass{
+      margin:0 24px 24px;border-radius:30px;padding:28px 26px;color:#fff;background:rgba(4,10,19,.72);
+      border:1px solid rgba(255,255,255,0.08);box-shadow:var(--shadow-lg)
+    }
+    .footer-glass p{color:rgba(232,238,250,0.88)}
+    .footer-links li{margin-bottom:10px}
+    .footer-links a,.footer-bottom-link{color:#dbe7fb;text-decoration:none;transition:all var(--transition)}
+    .footer-links a:hover,.footer-bottom-link:hover{color:#fb923c}
+    .social-icons a{
+      width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;margin-right:10px;border-radius:50%;
+      color:#fff;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);transition:all var(--transition)
+    }
+    .social-icons a:hover{transform:translateY(-2px);background:rgba(255,255,255,0.1)}
+    .newsletter-box .form-control{
+      border:none;min-height:46px;border-radius:14px 0 0 14px;background:rgba(255,255,255,0.94);color:#111827
+    }
+    .newsletter-box .btn{
+      border:none;border-radius:0 14px 14px 0;min-height:46px;background:linear-gradient(135deg, var(--orange), var(--orange-2));font-weight:800
+    }
+    .payment-strip{
+      margin-top:24px;padding:18px;text-align:center;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)
+    }
+    .payment-banner{max-width:280px;height:auto;margin:0 auto}
+
+    .sidebar.collapsed .brand-title,.sidebar.collapsed .brand-subtitle,.sidebar.collapsed .menu-label,.sidebar.collapsed .nav-link span,.sidebar.collapsed .chat-link small{display:none}
+    .sidebar.collapsed .brand,.sidebar.collapsed .nav-link{justify-content:center}
+    .sidebar.collapsed .upgrade-card{display:none}
+           .sidebar.collapsed .brand-mark{
+      width:30px;
+      height:30px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 14px 30px rgba(249,115,22,.28);
+      flex-shrink:0;
+    }
+    @media (max-width: 991px){
+      .dashboard-layout{grid-template-columns:1fr}
+      .sidebar{position:relative;top:0;min-height:auto;width:100%}
+      .sessions-layout{grid-template-columns:1fr}
+    }
+    @media (max-width: 767px){
+      .dashboard-layout{padding:16px;gap:16px}
+      .topbar,.page-header,.session-form-card,.session-info-card,.session-list-card{padding:18px}
+      .topbar-actions{width:100%;justify-content:flex-start}
+      .form-grid{grid-template-columns:1fr}
+      .footer-glass{margin:0 16px 16px;padding:22px 20px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard-layout">
+  <aside class="sidebar glass" id="sidebar">
+    <div class="sidebar-inner">
+      <div class="brand">
+        <div class="brand-mark"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div>
+          <h5 class="brand-title">Teach2Learn</h5>
+          <small class="brand-subtitle">Skill Exchange Hub</small>
+        </div>
+      </div>
+
+      <div class="menu-label">Main Menu</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="{% url 'dashboard' %}"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+        <a class="nav-link" href="{% url 'profile' %}"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+        <a class="nav-link" href="{% url 'matches' %}"><i class="fa-solid fa-heart"></i><span>Matches</span></a>
+        <a class="nav-link" href="{% url 'my_connections' %}"><i class="fas fa-user-friends"></i><span>My Connections</span></a>
+        <a class="nav-link active" href="{% url 'sessions' %}"><i class="fa-solid fa-calendar-days"></i><span>Sessions</span></a>
+        <a class="nav-link" href="{% url 'notifications' %}"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+        <a class="nav-link" href="{% url 'interview' %}"><i class="fa-solid fa-robot"></i><span>AI Interview</span></a>
+        <a class="nav-link" href="{% url 'certifications' %}"><i class="fa-solid fa-certificate"></i><span>Certificates</span></a>
+      </nav>
+
+      {% if connected_users %}
+      <div class="menu-label mt-4">Chats</div>
+      <nav class="sidebar-nav">
+        {% for c in connected_users %}
+        <a class="nav-link chat-link" href="{% url 'chat_with_user' c.connected_user.email %}">
+          <i class="fa-solid fa-comments"></i><span>Chat</span><small>{{ c.connected_user.email }}</small>
+        </a>
+        {% endfor %}
+      </nav>
+      {% endif %}
+
+      <div class="menu-label mt-4">Account</div>
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="{% url 'home' %}"><i class="fa-solid fa-circle-arrow-left"></i><span>Back To Home</span></a>
+        <a class="nav-link" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+        <a class="nav-link" href="{% url 'contact' %}"><i class="fa-solid fa-headset"></i><span>Help & Support</span></a>
+      </nav>
+
+      <div class="upgrade-card">
+        <div class="upgrade-icon"><i class="fa-solid fa-crown"></i></div>
+        <h6 class="fw-bold mb-1">Upgrade to Pro</h6>
+        <p class="small text-warning mb-3">Unlock premium mentoring tools and faster connections.</p>
+        <a href="{% url 'pricing' %}" class="btn-glass-primary">Upgrade Now</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-panel" id="dashboardMain">
+    <section class="topbar glass">
+      <button id="toggleSidebar" class="toggle-btn"><i class="fa-solid fa-bars"></i></button>
+      <div>
+        <!-- <h1 class="page-title mb-1">Scheduled Session</h1>
+        <p class="page-subtitle">Create a live learning session with date, time, and meeting link.</p> -->
+      </div>
+
+      <div class="topbar-actions">
+        <div class="icon-btn position-relative">
+          <a href="{% url 'notifications' %}?mark_read=1" class="position-relative p-0 d-inline-flex align-items-center justify-content-center">
+            <i class="fa-regular fa-bell fs-5"></i>
+            {% if notification_count > 0 %}
+            <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">{{ notification_count }}</span>
+            {% endif %}
+          </a>
+        </div>
+
+        <div class="top-chip">
+          {% if user.profile.is_premium %}
+            <i class="fa-solid fa-crown text-warning"></i><span class="badge bg-warning text-dark">Premium User</span>
+          {% else %}
+            <i class="fa-regular fa-user"></i><span class="badge bg-secondary">Free User</span>
+          {% endif %}
+        </div>
+
+        <div class="user-chip">
+          {% if user.profile.profile_image %}
+            <img src="{{ user.profile.profile_image.url }}" alt="Profile picture">
+          {% else %}
+            <img src="{% static 'images/default-avatar.png' %}" alt="Default avatar">
+          {% endif %}
+          <div class="name">{{ user.email }}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-header glass">
+      <div>
+        <h1 class="page-title">Scheduled Session</h1>
+        <p class="page-subtitle">Create a live learning session with date, time, and meeting link.</p>
+      </div>
+    </section>
+
+    {% if ongoing_sessions %}
+    <section class="session-list-card glass">
+      <div class="section-title">Ongoing Sessions</div>
+      <div class="session-group">
+        {% for session in ongoing_sessions %}
+        <div class="session-item">
+          <a href="{{ session.meeting_link }}" target="_blank" class="btn-surface btn-join ongoing-btn">
+            <i class="fa-solid fa-video"></i> Join {{ session.skill }}
+          </a>
+          <small class="d-block mt-2">Ends at {{ session.end|date:"M d, h:i A" }}</small>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% if upcoming_sessions %}
+    <section class="session-list-card glass">
+      <div class="section-title">Upcoming Sessions</div>
+      <div class="session-group">
+        {% for session in upcoming_sessions %}
+          {% if session.status == "expired" %}
+            <div class="session-item">
+              <button class="btn-surface btn-secondary" disabled>
+                <i class="fa-solid fa-ban"></i> Session Ended
+              </button>
+              <small class="d-block mt-2">Ended at {{ session.end|date:"M d, h:i A" }}</small>
+            </div>
+          {% else %}
+            <div class="session-item">
+              <a href="{{ session.meeting_link }}" target="_blank" class="btn-surface btn-join upcoming-btn">
+                <i class="fa-solid fa-calendar-check"></i> {{ session.skill }}
+              </a>
+              <small class="d-block mt-2">Starts at {{ session.start|date:"M d, h:i A" }}</small>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="sessions-layout">
+      <div class="session-form-card glass">
+        <div class="form-header">
+          <div class="form-icon"><i class="fa-solid fa-calendar-plus"></i></div>
+          <div>
+            <h3>Session Details</h3>
+            <p>Fill in the session information carefully before submitting.</p>
+          </div>
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="form-grid">
+            <div class="field-group">
+              <label class="field-label">Session Date</label>
+              <input type="date" name="session_date" class="form-control field-input" required>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Meeting Link</label>
+              <input type="text" name="meeting_link" class="form-control field-input" placeholder="https://meet.google.com/..." required>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Start Time</label>
+              <input type="time" name="session_time" class="form-control field-input" required>
+            </div>
+            <div class="field-group">
+              <label class="field-label">End Time</label>
+              <input type="time" name="end_time" class="form-control field-input" required>
+            </div>
+          </div>
+
+          <div class="helper-text">
+            Tip: Use a valid Google Meet, Zoom, or Teams link and make sure the end time is later than the start time.
+          </div>
+
+          <div class="submit-wrap">
+            <button type="submit" class="submit-btn">
+              <i class="fa-solid fa-check"></i> Schedule Session
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="session-info-card glass">
+        <div class="info-block">
+          <h5>Before You Schedule</h5>
+          <p>Confirm the learner or mentor is available, use the correct timezone, and share a stable meeting link for a smooth session experience.</p>
+        </div>
+
+        <div class="info-block">
+          <h5>Best Practices</h5>
+          <div class="info-list">
+            <div class="info-list-item">
+              <div class="info-list-icon"><i class="fa-solid fa-clock"></i></div>
+              <div><strong>Choose a clear time slot</strong><span>Avoid overlap and keep enough buffer between sessions.</span></div>
+            </div>
+            <div class="info-list-item">
+              <div class="info-list-icon"><i class="fa-solid fa-link"></i></div>
+              <div><strong>Use a working meeting link</strong><span>Paste the full URL so participants can join without issues.</span></div>
+            </div>
+            <div class="info-list-item">
+              <div class="info-list-icon"><i class="fa-solid fa-user-check"></i></div>
+              <div><strong>Coordinate with your partner</strong><span>Make sure both sides agree on the date and time before creating it.</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <h5>Session Flow</h5>
+          <p>Schedule the session, notify the participant, join on time, complete the discussion, and follow up with assignments or learning notes if needed.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+</div>
+
+<footer class="footer-glass">
+  <div class="container-fluid px-0">
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <h3 class="fw-bold mb-3"><i class="bi bi-mortarboard-fill me-2"></i>Teach2Learn</h3>
+        <p>Learn, Teach, Connect, and Grow together. Empowering learners and mentors through skill exchange, live sessions, assignments, certifications, and collaborative learning.</p>
+        <div class="social-icons mt-4">
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+          <a href="#"><i class="bi bi-github"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-youtube"></i></a>
+          <a href="#"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-md-6">
+        <h5 class="fw-bold mb-3">Quick Links</h5>
+        <ul class="list-unstyled footer-links">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">How It Works</a></li>
+          <li><a href="#">Skills</a></li>
+          <li><a href="{% url 'pricing' %}">Pricing</a></li>
+          <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-2 col-md-6">
+        <h5 class="fw-bold mb-3">Resources</h5>
+        <ul class="list-unstyled footer-links">
+          <li><a href="{% url 'sessions' %}">Sessions</a></li>
+          <li><a href="#">Assignments</a></li>
+          <li><a href="{% url 'certifications' %}">Certificates</a></li>
+          <li><a href="#">Progress</a></li>
+          <li><a href="{% url 'pricing' %}">Premium Plans</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <h5 class="fw-bold mb-3">Contact Us</h5>
+        <p><i class="bi bi-envelope-fill me-2"></i><a href="mailto:support@teach2learn.com" class="text-light text-decoration-none">support@teach2learn.com</a></p>
+        <p><i class="bi bi-telephone-fill me-2"></i>+91 98765 43210</p>
+        <p><i class="bi bi-geo-alt-fill me-2"></i>Telangana, India</p>
+
+        <div class="newsletter-box mt-4">
+          <h6>Subscribe Newsletter</h6>
+          <div class="input-group mt-3">
+            <input type="email" class="form-control" placeholder="Enter your email">
+            <button class="btn btn-primary">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="payment-strip">
+      <h6 class="fw-semibold mb-3"><i class="bi bi-shield-check me-2"></i>Secure Payments Accepted</h6>
+      <img src="{% static 'images/payment.png' %}" alt="Payment Methods" class="payment-banner img-fluid">
+    </div>
+
+    <div class="text-center mt-4 pt-3 border-top border-light border-opacity-10">
+      <p class="mb-2">© 2026 Teach2Learn. All Rights Reserved.</p>
+      <div>
+        <a href="#" class="footer-bottom-link">Privacy Policy</a>
+        <span class="mx-2">|</span>
+        <a href="#" class="footer-bottom-link">Terms & Conditions</a>
+        <span class="mx-2">|</span>
+        <a href="#" class="footer-bottom-link">Refund Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const topMatch = document.querySelector(".top-match");
+        if (topMatch) {
+            topMatch.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    });
+</script>
+
+<script>
+    const toggle = document.getElementById("toggleSidebar");
+    const sidebar = document.getElementById("sidebar");
+    const layout = document.querySelector(".dashboard-layout");
+
+    toggle.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+
+        if (window.innerWidth > 991) {
+            layout.style.gridTemplateColumns = sidebar.classList.contains("collapsed") ? "90px 1fr" : "290px 1fr";
+        } else {
+            layout.style.gridTemplateColumns = "1fr";
+        }
+    });
+</script>
+
+</body>
+</html>

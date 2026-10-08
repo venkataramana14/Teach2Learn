@@ -1,0 +1,1438 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matches | Teach2Learn</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --sidebar-width:290px;
+
+            --text-xs:clamp(0.75rem,0.72rem + 0.2vw,0.875rem);
+            --text-sm:clamp(0.875rem,0.84rem + 0.25vw,1rem);
+            --text-base:clamp(1rem,0.95rem + 0.2vw,1.05rem);
+            --text-lg:clamp(1.125rem,1.02rem + 0.45vw,1.375rem);
+            --text-xl:clamp(1.35rem,1.1rem + 0.8vw,1.9rem);
+
+            --radius-sm:14px;
+            --radius-md:18px;
+            --radius-lg:24px;
+            --radius-xl:30px;
+            --radius-full:999px;
+
+            --bg-950:#07111f;
+            --bg-900:#0b1a30;
+            --bg-850:#102545;
+
+            --surface:rgba(11,26,48,0.82);
+            --surface-2:rgba(15,33,61,0.9);
+            --surface-soft:rgba(255,255,255,0.04);
+
+            --border:rgba(148,163,184,0.16);
+            --border-strong:rgba(255,255,255,0.10);
+
+            --text:#eef4ff;
+            --text-muted:#a8b7cf;
+            --text-soft:#7f91af;
+
+            --orange:#f97316;
+            --orange-2:#fb923c;
+            --blue:#3b82f6;
+            --blue-2:#2563eb;
+            --teal:#14b8a6;
+            --amber:#f59e0b;
+            --green:#22c55e;
+            --red:#ef4444;
+
+            --shadow-sm:0 8px 24px rgba(0,0,0,.18);
+            --shadow-md:0 16px 36px rgba(0,0,0,.22);
+            --shadow-lg:0 22px 60px rgba(0,0,0,.28);
+
+            --transition:220ms cubic-bezier(.16,1,.3,1);
+        }
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        html,body{
+            min-height:100%;
+        }
+
+        body{
+            font-family:'Satoshi','Segoe UI',sans-serif;
+            font-size:var(--text-base);
+            color:var(--text);
+            overflow-x:hidden;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(249,115,22,.16), transparent 20%),
+                radial-gradient(circle at 85% 15%, rgba(59,130,246,.14), transparent 22%),
+                radial-gradient(circle at 85% 85%, rgba(20,184,166,.08), transparent 18%),
+                linear-gradient(135deg, var(--bg-950), var(--bg-900) 48%, var(--bg-850));
+            background-attachment:fixed;
+        }
+
+        a{
+            text-decoration:none;
+        }
+
+        img{
+            display:block;
+            max-width:100%;
+        }
+
+        .glass{
+            background:var(--surface);
+            border:1px solid var(--border);
+            box-shadow:var(--shadow-md);
+            backdrop-filter:blur(20px) saturate(140%);
+            -webkit-backdrop-filter:blur(20px) saturate(140%);
+        }
+
+        .dashboard-layout{
+            min-height:100vh;
+            display:grid;
+            grid-template-columns:var(--sidebar-width) 1fr;
+            gap:24px;
+            padding:24px;
+            align-items:start;
+        }
+
+        .sidebar{
+            position:sticky;
+            top:24px;
+            min-height:calc(100vh - 48px);
+            border-radius:30px;
+            padding:20px;
+            width:var(--sidebar-width);
+            overflow:hidden;
+            transition:.4s ease;
+        }
+
+        .sidebar-inner{
+            display:flex;
+            flex-direction:column;
+            height:100%;
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:2px;
+            padding:14px;
+            border-radius:20px;
+            margin-bottom:18px;
+            background:rgba(255,255,255,0.04);
+            border:1px solid var(--border-strong);
+        }
+        .sidebar.collapsed .brand-mark{
+      width:30px;
+      height:30px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg, var(--orange), var(--orange-2));
+      box-shadow:0 14px 30px rgba(249,115,22,.28);
+      flex-shrink:0;
+    }
+        .brand-mark{
+            width:50px;
+            height:50px;
+            border-radius:16px;
+            display:grid;
+            place-items:center;
+            background:linear-gradient(135deg, var(--orange), var(--orange-2));
+            color:#fff;
+            box-shadow:0 14px 30px rgba(249,115,22,.28);
+            flex-shrink:0;
+        }
+
+        .brand-title{
+            font-size:1.15rem;
+            font-weight:900;
+            color:var(--text);
+            margin:0;
+        }
+
+        .brand-subtitle{
+            color:var(--text-muted);
+            font-size:12px;
+            font-weight:600;
+        }
+
+        .menu-label{
+            font-size:11px;
+            font-weight:800;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            color:var(--text-soft);
+            padding:12px 12px 8px;
+        }
+
+        .sidebar-nav{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+
+        .sidebar .nav-link{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            min-height:48px;
+            padding:12px 14px;
+            border-radius:16px;
+            color:var(--text-muted);
+            font-size:14px;
+            font-weight:700;
+            transition:all var(--transition);
+            border:1px solid transparent;
+        }
+
+        .sidebar .nav-link i{
+            width:18px;
+            text-align:center;
+            flex-shrink:0;
+        }
+
+        .sidebar .nav-link:hover{
+            color:#fff;
+            background:rgba(255,255,255,0.05);
+            border-color:rgba(255,255,255,0.08);
+            transform:translateX(3px);
+        }
+
+        .sidebar .nav-link.active{
+            color:#fff;
+            background:linear-gradient(135deg, rgba(249,115,22,.95), rgba(37,99,235,.86));
+            box-shadow:0 14px 28px rgba(249,115,22,.22);
+        }
+
+        .chat-link small{
+            margin-left:auto;
+            max-width:95px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+            font-size:11px;
+            opacity:.8;
+        }
+
+        .upgrade-card{
+            margin-top:22px;
+            padding:20px 16px;
+            border-radius:22px;
+            text-align:center;
+            background:linear-gradient(180deg, rgba(249,115,22,.12), rgba(59,130,246,.08));
+            border:1px solid rgba(255,255,255,0.08);
+            box-shadow:var(--shadow-sm);
+        }
+
+        .upgrade-card h6{
+            color:var(--text);
+        }
+
+        .upgrade-card p{
+            color:var(--text-muted) !important;
+        }
+
+        .upgrade-icon{
+            width:56px;
+            height:56px;
+            border-radius:18px;
+            display:grid;
+            place-items:center;
+            margin:0 auto 12px;
+            color:#fff;
+            background:linear-gradient(135deg, var(--orange), var(--orange-2));
+            box-shadow:0 12px 24px rgba(249,115,22,.24);
+        }
+
+        .main-panel{
+            display:flex;
+            flex-direction:column;
+            gap:24px;
+            min-width:0;
+            transition:all .4s ease;
+        }
+
+        .topbar{
+            border-radius:28px;
+            padding:18px 22px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:16px;
+            flex-wrap:wrap;
+            background:var(--surface-2);
+            border:1px solid var(--border);
+            box-shadow:var(--shadow-md);
+        }
+
+        .toggle-btn{
+            width:50px;
+            height:50px;
+            border:none;
+            border-radius:15px;
+            background:linear-gradient(135deg, var(--orange), var(--orange-2));
+            color:#fff;
+            cursor:pointer;
+            font-size:20px;
+            transition:all var(--transition);
+        }
+
+        .toggle-btn:hover{
+            transform:scale(1.04);
+        }
+
+        .topbar-actions{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-left:auto;
+        }
+
+        .icon-btn{
+            width:48px;
+            height:48px;
+            border-radius:16px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:var(--text);
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+            transition:all var(--transition);
+            position:relative;
+        }
+
+        .icon-btn:hover{
+            transform:translateY(-2px);
+            color:#fff;
+            background:rgba(255,255,255,0.08);
+        }
+
+        .icon-btn a{
+            color:var(--text);
+        }
+
+        .top-chip{
+            min-height:48px;
+            border-radius:999px;
+            padding:10px 14px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            font-size:var(--text-sm);
+            font-weight:700;
+            white-space:nowrap;
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+            color:var(--text);
+        }
+
+        .user-chip{
+            min-height:56px;
+            padding:8px 12px;
+            border-radius:18px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            white-space:nowrap;
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+        }
+
+        .user-chip img{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            object-fit:cover;
+            border:2px solid rgba(255,255,255,0.18);
+        }
+
+        .user-chip .name{
+            font-size:var(--text-sm);
+            font-weight:800;
+            color:var(--text);
+            max-width:220px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .page-header{
+            border-radius:26px;
+            padding:22px 24px;
+            background:var(--surface-2);
+            border:1px solid var(--border);
+            box-shadow:var(--shadow-md);
+        }
+
+        .page-title{
+            font-size:clamp(1.45rem, 1.2rem + 0.8vw, 2rem);
+            font-weight:900;
+            margin-bottom:6px;
+            color:var(--text);
+        }
+
+        .page-subtitle{
+            color:var(--text-muted);
+            margin-bottom:0;
+        }
+
+        .search-panel{
+            padding:22px;
+            border-radius:26px;
+            background:var(--surface-2);
+            border:1px solid var(--border);
+            box-shadow:var(--shadow-md);
+        }
+
+        .search-form-wrap{
+            display:grid;
+            grid-template-columns:minmax(0,1fr) 170px;
+            gap:14px;
+            align-items:center;
+        }
+
+        .search-input{
+            position:relative;
+        }
+
+        .search-input i{
+            position:absolute;
+            left:16px;
+            top:50%;
+            transform:translateY(-50%);
+            color:var(--text-soft);
+            font-size:15px;
+        }
+
+        .search-input .form-control{
+            border:1px solid rgba(255,255,255,0.08);
+            min-height:52px;
+            padding-left:46px;
+            border-radius:16px;
+            background:rgba(255,255,255,0.05);
+            box-shadow:none;
+            color:var(--text);
+        }
+
+        .search-input .form-control::placeholder{
+            color:var(--text-soft);
+        }
+
+        .search-input .form-control:focus{
+            box-shadow:none;
+            background:rgba(255,255,255,0.08);
+            color:var(--text);
+            border-color:rgba(249,115,22,.45);
+        }
+
+        .btn-glass-primary{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            min-height:52px;
+            padding:0 18px;
+            border:none;
+            border-radius:16px;
+            font-size:var(--text-sm);
+            font-weight:800;
+            color:#fff;
+            background:linear-gradient(135deg, var(--orange), var(--orange-2));
+            box-shadow:0 12px 28px rgba(249,115,22,.24);
+            transition:all var(--transition);
+            width:100%;
+        }
+
+        .btn-glass-primary:hover{
+            color:#fff;
+            transform:translateY(-2px);
+        }
+
+        .content-grid{
+            display:grid;
+            grid-template-columns:360px minmax(0,1fr);
+            gap:24px;
+            align-items:start;
+        }
+
+        .sticky-profile{
+            position:sticky;
+            top:24px;
+        }
+
+        .info-card,
+        .matches-card{
+            padding:24px;
+            border-radius:26px;
+            background:var(--surface-2);
+            border:1px solid var(--border);
+            box-shadow:var(--shadow-md);
+        }
+
+        .section-title{
+            font-size:var(--text-lg);
+            font-weight:900;
+            margin-bottom:16px;
+            color:var(--text);
+            letter-spacing:-.01em;
+        }
+
+        .summary-block{
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:18px;
+            padding:16px;
+            min-height:auto;
+        }
+
+        .summary-block p{
+            margin-bottom:10px;
+            color:var(--text-muted);
+        }
+
+        .summary-block p:last-child{
+            margin-bottom:0;
+        }
+
+        .summary-block strong{
+            color:var(--text);
+        }
+
+        .muted-value{
+            color:var(--text-muted);
+            font-weight:500;
+            margin-bottom:0;
+            word-break:break-word;
+        }
+
+        .info-card h6{
+            color:var(--text);
+        }
+
+        .badge-skill{
+            background:rgba(238,242,255,.08);
+            color:#c7d2fe;
+            border:1px solid rgba(255,255,255,.14);
+            border-radius:999px;
+            padding:8px 14px;
+            font-weight:700;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            box-shadow:var(--shadow-sm);
+            margin:4px 6px 4px 0;
+            font-size:13px;
+        }
+
+        .matches-card{
+            height:calc(100vh - 250px);
+            display:flex;
+            flex-direction:column;
+            min-height:620px;
+        }
+
+        .matches-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
+            flex-shrink:0;
+        }
+
+        .matches-head small{
+            color:var(--text-muted);
+            font-weight:700;
+        }
+
+        .matches-scroll{
+            flex:1;
+            overflow-y:auto;
+            padding-right:8px;
+            min-height:0;
+            scrollbar-width:thin;
+            scrollbar-color:rgba(249,115,22,.75) rgba(255,255,255,.06);
+        }
+
+        .matches-scroll::-webkit-scrollbar{
+            width:10px;
+        }
+
+        .matches-scroll::-webkit-scrollbar-track{
+            background:rgba(255,255,255,.06);
+            border-radius:999px;
+        }
+
+        .matches-scroll::-webkit-scrollbar-thumb{
+            background:linear-gradient(180deg, rgba(249,115,22,.78), rgba(59,130,246,.70));
+            border-radius:999px;
+            border:2px solid rgba(255,255,255,.08);
+        }
+
+        .match-card{
+            position:relative;
+            overflow:hidden;
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:24px;
+            padding:20px;
+            box-shadow:var(--shadow-sm);
+            transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+            margin-bottom:16px;
+        }
+
+        .match-card:last-child{
+            margin-bottom:0;
+        }
+
+        .match-card:hover{
+            transform:translateY(-4px);
+            box-shadow:var(--shadow-md);
+            background:rgba(255,255,255,.06);
+        }
+
+        .top-match{
+            border:1px solid rgba(249,115,22,.42);
+            background:
+                linear-gradient(135deg, rgba(249,115,22,.14), rgba(59,130,246,.08)),
+                rgba(255,255,255,.04);
+        }
+
+        .match-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:16px;
+            flex-wrap:wrap;
+            margin-bottom:16px;
+        }
+
+        .match-user{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            min-width:0;
+        }
+
+        .profile-img{
+            width:82px;
+            height:82px;
+            border-radius:50%;
+            object-fit:cover;
+            border:3px solid rgba(255,255,255,.22);
+            box-shadow:0 14px 28px rgba(0,0,0,.16);
+            background:#fff;
+            flex-shrink:0;
+            margin-left:auto;
+            margin-right:auto;
+        }
+
+        .match-user .profile-img{
+            margin-left:0;
+            margin-right:0;
+        }
+
+        .match-user-info h5{
+            margin-bottom:4px;
+            font-weight:900;
+            color:var(--text);
+        }
+
+        .match-user-info p{
+            margin-bottom:0;
+            color:var(--text-muted);
+            font-size:var(--text-sm);
+            word-break:break-word;
+        }
+
+        .score-badge{
+            background:rgba(34,197,94,.14);
+            color:#bbf7d0;
+            font-weight:900;
+            padding:9px 16px;
+            border-radius:999px;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            border:1px solid rgba(34,197,94,.24);
+            box-shadow:var(--shadow-sm);
+            white-space:nowrap;
+        }
+
+        .top-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:8px 14px;
+            margin-bottom:14px;
+            border-radius:999px;
+            background:rgba(249,115,22,.14);
+            border:1px solid rgba(249,115,22,.30);
+            color:#fed7aa;
+            font-weight:800;
+            font-size:13px;
+        }
+
+        .detail-text{
+            color:var(--text-muted);
+            margin-bottom:12px;
+            line-height:1.7;
+        }
+
+        .detail-text strong{
+            color:var(--text);
+        }
+
+        .match-actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin-top:16px;
+        }
+
+        .btn-surface{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            min-height:44px;
+            padding:0 16px;
+            border-radius:13px;
+            font-weight:800;
+            border:none;
+            transition:all var(--transition);
+        }
+
+        .btn-surface:hover{
+            color:#fff;
+            transform:translateY(-2px);
+        }
+
+        .btn-profile{
+            background:linear-gradient(135deg, var(--blue-2), var(--blue));
+            color:#fff;
+            box-shadow:0 12px 28px rgba(59,130,246,.18);
+        }
+
+        .btn-connect{
+            background:linear-gradient(135deg, #16a34a, var(--green));
+            color:#fff;
+            box-shadow:0 12px 28px rgba(34,197,94,.18);
+        }
+
+        .btn-chat{
+            background:linear-gradient(135deg, var(--amber), #fbbf24);
+            color:#fff;
+        }
+
+        .btn-upgrade{
+            background:linear-gradient(135deg, var(--orange), var(--orange-2));
+            color:#fff;
+            box-shadow:0 12px 28px rgba(249,115,22,.24);
+        }
+
+        .btn-locked{
+            background:rgba(255,255,255,.06);
+            color:var(--text-muted);
+            border:1px solid rgba(255,255,255,.08);
+            box-shadow:var(--shadow-sm);
+        }
+
+        .empty-state{
+            text-align:center;
+            padding:32px 20px;
+            border-radius:22px;
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(255,255,255,.08);
+            color:var(--text-muted);
+            font-weight:700;
+        }
+
+        .footer-glass{
+            margin:24px;
+            margin-top:0;
+            border-radius:30px;
+            padding:28px 26px;
+            color:#fff;
+            background:rgba(4,10,19,.72);
+            border:1px solid rgba(255,255,255,.08);
+            box-shadow:var(--shadow-lg);
+        }
+
+        .footer-glass p{
+            color:rgba(232,238,250,.88);
+        }
+
+        .footer-links li{
+            margin-bottom:10px;
+        }
+
+        .footer-links a,
+        .footer-bottom-link{
+            color:#dbe7fb;
+            text-decoration:none;
+            transition:all var(--transition);
+        }
+
+        .footer-links a:hover,
+        .footer-bottom-link:hover{
+            color:var(--orange-2);
+        }
+
+        .social-icons a{
+            width:44px;
+            height:44px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            margin-right:10px;
+            border-radius:50%;
+            color:#fff;
+            background:rgba(255,255,255,.06);
+            border:1px solid rgba(255,255,255,.08);
+            transition:all var(--transition);
+        }
+
+        .social-icons a:hover{
+            transform:translateY(-2px);
+            background:rgba(255,255,255,.10);
+        }
+
+        .newsletter-box .form-control{
+            border:none;
+            min-height:46px;
+            border-radius:14px 0 0 14px;
+            background:rgba(255,255,255,.94);
+            color:#111827;
+        }
+
+        .newsletter-box .btn{
+            border:none;
+            border-radius:0 14px 14px 0;
+            min-height:46px;
+            background:linear-gradient(135deg, var(--orange), var(--orange-2));
+            font-weight:800;
+        }
+
+        .payment-strip{
+            margin-top:24px;
+            padding:18px;
+            text-align:center;
+            border-radius:20px;
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(255,255,255,.08);
+        }
+
+        .payment-banner{
+            max-width:280px;
+            height:auto;
+            margin:0 auto;
+        }
+
+        .modal-content{
+            border:none;
+            border-radius:24px;
+            background:var(--surface-2);
+            color:var(--text);
+            border:1px solid var(--border);
+            box-shadow:var(--shadow-lg);
+        }
+
+        .modal-header,
+        .modal-footer{
+            border-color:rgba(255,255,255,.08);
+        }
+
+        .modal-body .text-secondary{
+            color:var(--text-muted) !important;
+        }
+
+        .btn-close{
+            filter:invert(1);
+        }
+
+        .sidebar.collapsed{
+            width:90px;
+            min-width:90px;
+        }
+
+        .sidebar.collapsed .brand-title,
+        .sidebar.collapsed .brand-subtitle,
+        .sidebar.collapsed .menu-label,
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .chat-link small{
+            display:none;
+        }
+
+        .sidebar.collapsed .brand,
+        .sidebar.collapsed .nav-link{
+            justify-content:center;
+        }
+
+        .sidebar.collapsed .brand{
+            padding:12px;
+        }
+
+        .sidebar.collapsed .upgrade-card{
+            display:none;
+        }
+
+        @media (max-width:1200px){
+            .content-grid{
+                grid-template-columns:320px minmax(0,1fr);
+            }
+        }
+
+        @media (max-width:991px){
+            .dashboard-layout{
+                grid-template-columns:1fr !important;
+            }
+
+            .sidebar{
+                position:relative;
+                top:0;
+                min-height:auto;
+                width:100%;
+            }
+
+            .sidebar.collapsed{
+                width:100%;
+            }
+
+            .search-form-wrap{
+                grid-template-columns:1fr;
+            }
+
+            .content-grid{
+                grid-template-columns:1fr;
+            }
+
+            .sticky-profile{
+                position:relative;
+                top:0;
+            }
+
+            .matches-card{
+                height:auto;
+                min-height:auto;
+            }
+
+            .matches-scroll{
+                max-height:none;
+                overflow:visible;
+                padding-right:0;
+            }
+        }
+
+        @media (max-width:767px){
+            .dashboard-layout{
+                padding:16px;
+                gap:16px;
+            }
+
+            .topbar{
+                padding:16px;
+            }
+
+            .page-header,
+            .search-panel,
+            .info-card,
+            .matches-card{
+                padding:18px;
+            }
+
+            .topbar-actions{
+                width:100%;
+                justify-content:flex-start;
+                overflow-x:auto;
+                padding-bottom:2px;
+            }
+
+            .profile-img{
+                width:68px;
+                height:68px;
+            }
+
+            .footer-glass{
+                margin:16px;
+                margin-top:0;
+                padding:22px 20px;
+            }
+
+            .match-top{
+                flex-direction:column;
+                align-items:flex-start;
+            }
+
+            .user-chip{
+                max-width:100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce){
+            *{
+                scroll-behavior:auto !important;
+                animation:none !important;
+                transition:none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-layout">
+    <aside class="sidebar glass" id="sidebar">
+        <div class="sidebar-inner">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h5 class="brand-title">Teach2Learn</h5>
+                    <small class="brand-subtitle">Skill Exchange Hub</small>
+                </div>
+            </div>
+
+            <div class="menu-label">Main Menu</div>
+            <nav class="sidebar-nav">
+                <a class="nav-link" href="{% url 'dashboard' %}">
+                    <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+                </a>
+                <a class="nav-link" href="{% url 'profile' %}">
+                    <i class="fa-solid fa-user"></i><span>Profile</span>
+                </a>
+                <a class="nav-link active" href="{% url 'matches' %}">
+                    <i class="fa-solid fa-heart"></i><span>Matches</span>
+                </a>
+                <a class="nav-link" href="{% url 'my_connections' %}">
+                    <i class="fas fa-user-friends"></i><span>My Connections</span>
+                </a>
+                <a class="nav-link" href="{% url 'sessions' %}">
+                    <i class="fa-solid fa-calendar-days"></i><span>Sessions</span>
+                </a>
+                <a class="nav-link" href="{% url 'notifications' %}">
+                    <i class="fa-solid fa-bell"></i><span>Notifications</span>
+                </a>
+                <a class="nav-link" href="{% url 'interview' %}">
+                    <i class="fa-solid fa-robot"></i><span>AI Interview</span>
+                </a>
+                <a class="nav-link" href="{% url 'certifications' %}">
+                    <i class="fa-solid fa-certificate"></i><span>Certificates</span>
+                </a>
+            </nav>
+
+            {% if connected_users %}
+            <div class="menu-label mt-4">Chats</div>
+            <nav class="sidebar-nav">
+                {% for c in connected_users %}
+                <a class="nav-link chat-link" href="{% url 'chat_with_user' c.connected_user.email %}">
+                    <i class="fa-solid fa-comments"></i>
+                    <span>Chat</span>
+                    <small>{{ c.connected_user.email }}</small>
+                </a>
+                {% endfor %}
+            </nav>
+            {% endif %}
+
+            <div class="menu-label mt-4">Account</div>
+            <nav class="sidebar-nav">
+                <a class="nav-link" href="{% url 'home' %}">
+                    <i class="fa-solid fa-circle-arrow-left"></i><span>Back To Home</span>
+                </a>
+                <a class="nav-link" href="{% url 'logout' %}">
+                    <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                </a>
+                <a class="nav-link" href="{% url 'contact' %}">
+                    <i class="fa-solid fa-headset"></i><span>Help & Support</span>
+                </a>
+            </nav>
+
+            <div class="upgrade-card">
+                <div class="upgrade-icon">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Upgrade to Pro</h6>
+                <p class="small text-warning mb-3">Unlock premium mentoring tools and faster connections.</p>
+                <a href="{% url 'pricing' %}" class="btn-glass-primary">Upgrade Now</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-panel" id="dashboardMain">
+        <section class="topbar">
+            <button id="toggleSidebar" class="toggle-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="topbar-actions">
+                <div class="icon-btn position-relative">
+                    <a href="{% url 'notifications' %}" class="position-relative p-0 d-inline-flex align-items-center justify-content-center">
+                        <i class="fa-regular fa-bell fs-5"></i>
+                        {% if notification_count > 0 %}
+                        <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">
+                            {{ notification_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </div>
+
+                <div class="top-chip">
+                    {% if profile.is_premium %}
+                        <i class="fa-solid fa-crown text-warning"></i>
+                        <span class="badge bg-warning text-dark">Premium User</span>
+                    {% else %}
+                        <i class="fa-regular fa-user"></i>
+                        <span class="badge bg-secondary">Free User</span>
+                    {% endif %}
+                </div>
+
+                <div class="user-chip">
+                    {% if profile.profile_image_url %}
+                        <img src="{{ profile.profile_image_url }}" alt="Profile picture">
+                    {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" alt="Default avatar">
+                    {% endif %}
+
+                    <div class="name">{{ user.email }}</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-header">
+            <div>
+                <h1 class="page-title">Find Learning Partners</h1>
+                <p class="page-subtitle">Discover the best mentor and learner matches based on your skills.</p>
+            </div>
+        </section>
+
+        <section class="search-panel">
+            <form method="GET" action="{% url 'matches' %}">
+                <div class="search-form-wrap">
+                    <div class="search-input">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input
+                            type="text"
+                            name="skill"
+                            class="form-control"
+                            placeholder="Search by skill"
+                            value="{{ request.GET.skill }}">
+                    </div>
+                    <button type="submit" class="btn-glass-primary">Search</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="content-grid">
+            <div class="sticky-profile">
+                <div class="info-card">
+                    <h3 class="section-title">My Profile</h3>
+
+                    <div class="text-center mb-4">
+                        {% if profile.profile_image_url %}
+                            <img src="{{ profile.profile_image_url }}"
+                                 class="profile-img"
+                                 alt="Profile Image">
+                        {% else %}
+                            <img src="{% static 'images/default-avatar.png' %}"
+                                 class="profile-img"
+                                 alt="Default Profile">
+                        {% endif %}
+                    </div>
+
+                    <div class="summary-block mb-3">
+                        <p><strong>Name:</strong> {{ profile.full_name|default:"Not added" }}</p>
+                        <p><strong>Email:</strong> {{ profile.email|default:"Not added" }}</p>
+                        <p><strong>Location:</strong> {{ profile.location|default:"Not added" }}</p>
+                    </div>
+
+                    <h6 class="mb-2 fw-bold">Can Teach</h6>
+                    <div class="mb-3">
+                        {% if profile.teach_skills %}
+                            {% for skill in profile.teach_skills %}
+                                <span class="badge-skill">{{ skill }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p class="muted-value">No teaching skills added yet.</p>
+                        {% endif %}
+                    </div>
+
+                    <h6 class="mb-2 fw-bold">Want To Learn</h6>
+                    <div class="mb-3">
+                        {% if profile.learn_skills %}
+                            {% for skill in profile.learn_skills %}
+                                <span class="badge-skill">{{ skill }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p class="muted-value">No learning skills added yet.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="summary-block">
+                        <p class="mb-0"><strong>Experience:</strong> {{ profile.experience|default:"Not added" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="matches-card">
+                <div class="matches-head">
+                    <h3 class="section-title mb-0">Suggested Learning Partners</h3>
+                    <small>Sorted by highest match</small>
+                </div>
+
+                <div class="matches-scroll" id="matchesSlider">
+                    {% for member in members %}
+                    <div class="match-card {% if forloop.first %}top-match{% endif %}" id="match-{{ member.id }}">
+                        <div class="match-top">
+                            <div class="match-user">
+                                {% if member.profile_image_url %}
+                                    <img src="{{ member.profile_image_url }}" class="profile-img" alt="{{ member.full_name }}">
+                                {% else %}
+                                    <img src="{% static 'images/default-avatar.png' %}" class="profile-img" alt="{{ member.full_name }}">
+                                {% endif %}
+
+                                <div class="match-user-info">
+                                    <h5>{{ member.full_name }}</h5>
+                                    <p>{{ member.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if member.is_top_match %}
+                        <div>
+                            <span class="top-badge">
+                                <i class="fa-solid fa-trophy"></i>
+                                Top Match
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <p class="detail-text">
+                            <strong>Can Teach:</strong>
+                            {% for skill in member.teach_skills %}
+                                {{ skill }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                No skills listed
+                            {% endfor %}
+                        </p>
+
+                        <p class="detail-text">
+                            <strong>Average Rating:</strong>
+                            ⭐ {{ member.average_rating }}/5
+                        </p>
+
+                        <p class="detail-text">
+                            <strong>Rating Score:</strong>
+                            {{ member.rating_percentage }}%
+                        </p>
+
+                        <p class="detail-text">
+                            <strong>Skill Match:</strong>
+                            {{ member.skill_percentage }}%
+                        </p>
+
+                        <p class="detail-text">
+                            <strong>Overall Match:</strong>
+                            <span style="color:#22c55e;font-weight:bold;">
+                                {{ member.match_score }}%
+                            </span>
+                        </p>
+
+                        <p class="detail-text">
+                            <strong>Location:</strong> {{ member.location|default:"Not added" }}
+                        </p>
+
+                        <p class="detail-text">
+                            <strong>Experience:</strong> {{ member.experience|default:"Not added" }}
+                        </p>
+
+                        <div class="match-actions">
+                            <a href="{% url 'member_profile1' member.id %}" class="btn-surface btn-profile">
+                                View Profile
+                            </a>
+
+                            {% if profile.is_premium %}
+                            <form method="POST" action="{% url 'send_request' member.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="skill" value="{{ request.GET.skill }}">
+                                <button type="submit" class="btn-surface btn-connect">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                    Connect
+                                </button>
+                            </form>
+                            {% else %}
+                            <a href="{% url 'pricing' %}" class="btn-surface btn-upgrade">
+                                <i class="fa-solid fa-crown"></i>
+                                Upgrade to Connect
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">No matching users found.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer class="footer-glass">
+    <div class="container-fluid px-0">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <h3 class="fw-bold mb-3">
+                    <i class="bi bi-mortarboard-fill me-2"></i>Teach2Learn
+                </h3>
+                <p>
+                    Learn, Teach, Connect, and Grow together. Empowering learners and mentors through skill exchange,
+                    live sessions, assignments, certifications, and collaborative learning.
+                </p>
+
+                <div class="social-icons mt-4">
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <a href="#"><i class="bi bi-github"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5 class="fw-bold mb-3">Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Skills</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5 class="fw-bold mb-3">Resources</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Sessions</a></li>
+                    <li><a href="#">Assignments</a></li>
+                    <li><a href="#">Certificates</a></li>
+                    <li><a href="#">Progress</a></li>
+                    <li><a href="#">Premium Plans</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <h5 class="fw-bold mb-3">Contact Us</h5>
+                <p><i class="bi bi-envelope-fill me-2"></i>support@teach2learn.com</p>
+                <p><i class="bi bi-telephone-fill me-2"></i>+91 98765 43210</p>
+                <p><i class="bi bi-geo-alt-fill me-2"></i>Telangana, India</p>
+
+                <div class="newsletter-box mt-4">
+                    <h6>Subscribe Newsletter</h6>
+                    <div class="input-group mt-3">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-primary">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-strip">
+            <h6 class="fw-semibold mb-3">
+                <i class="bi bi-shield-check me-2"></i>Secure Payments Accepted
+            </h6>
+            <img src="{% static 'images/payment.png' %}" alt="Payment Methods" class="payment-banner img-fluid">
+        </div>
+
+        <div class="text-center mt-4 pt-3 border-top border-light border-opacity-10">
+            <p class="mb-2">© 2026 Teach2Learn. All Rights Reserved.</p>
+            <div>
+                <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                <span class="mx-2">|</span>
+                <a href="#" class="footer-bottom-link">Terms & Conditions</a>
+                <span class="mx-2">|</span>
+                <a href="#" class="footer-bottom-link">Refund Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="modal fade" id="premiumModal" tabindex="-1" aria-labelledby="premiumModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="premiumModalLabel">Premium Feature</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-center p-4">
+                <i class="fa-solid fa-crown text-warning" style="font-size:55px;"></i>
+                <h4 class="mt-3 fw-bold">Connect with Learners & Mentors</h4>
+                <p class="text-secondary mb-0">
+                    This feature is available only for Premium members.
+                    Upgrade your account to send connection requests,
+                    chat with mentors, and schedule learning sessions.
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="{% url 'pricing' %}" class="btn btn-warning">Upgrade Now</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const topMatch = document.querySelector(".top-match");
+        if (topMatch) {
+            topMatch.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    });
+</script>
+
+<script>
+    const toggle = document.getElementById("toggleSidebar");
+    const sidebar = document.getElementById("sidebar");
+    const layout = document.querySelector(".dashboard-layout");
+
+    toggle.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+
+        if (window.innerWidth > 991) {
+            layout.style.gridTemplateColumns = sidebar.classList.contains("collapsed") ? "90px 1fr" : "290px 1fr";
+        } else {
+            layout.style.gridTemplateColumns = "1fr";
+        }
+    });
+</script>
+
+</body>
+</html>

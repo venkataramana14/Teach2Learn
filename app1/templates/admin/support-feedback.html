@@ -1,0 +1,829 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support & Feedback</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
+    <style>
+        :root{
+            --glass-bg: rgba(255,255,255,0.10);
+            --glass-strong: rgba(255,255,255,0.15);
+            --glass-border: rgba(255,255,255,0.22);
+            --glass-shadow: 0 10px 32px rgba(0,0,0,0.20);
+            --text-main: #ffffff;
+            --text-soft: rgba(255,255,255,0.78);
+            --text-dark: #14213d;
+            --panel-light: rgba(255,255,255,0.88);
+            --panel-border: rgba(255,255,255,0.42);
+            --accent-blue: #60a5fa;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #22d3ee;
+        }
+
+        *{
+            box-sizing: border-box;
+        }
+
+        body{
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(96,165,250,0.28), transparent 24%),
+                radial-gradient(circle at top right, rgba(139,92,246,0.24), transparent 30%),
+                radial-gradient(circle at bottom left, rgba(34,211,238,0.20), transparent 26%),
+                linear-gradient(135deg, #0f172a, #1e1b4b 42%, #0f766e 100%);
+            background-attachment: fixed;
+        }
+
+        .page-shell{
+            padding: 22px;
+        }
+
+        .sidebar-panel{
+            min-height: calc(100vh - 44px);
+            position: sticky;
+            top: 22px;
+            padding: 24px 18px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(18px) saturate(145%);
+            -webkit-backdrop-filter: blur(18px) saturate(145%);
+        }
+
+        .brand-title{
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        #sidebar .nav-link{
+            color: rgba(255,255,255,0.86) !important;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid transparent;
+        }
+
+        #sidebar .nav-link i{
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        #sidebar .nav-link:hover{
+            background: rgba(255,255,255,0.14);
+            color: #ffffff !important;
+            transform: translateX(8px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+            border-color: rgba(255,255,255,0.18);
+        }
+
+        #sidebar .nav-link:hover i{
+            transform: scale(1.15);
+            color: #bfdbfe;
+        }
+
+        #sidebar .nav-link.active{
+            background: linear-gradient(135deg, rgba(96,165,250,0.28), rgba(139,92,246,0.22));
+            color: #ffffff !important;
+            box-shadow: 0 10px 26px rgba(37,99,235,0.20);
+            border-color: rgba(255,255,255,0.18);
+        }
+
+        #logout{
+            color: #fecaca !important;
+            font-size: 15px;
+        }
+
+        #logout:hover{
+            background: rgba(239,68,68,0.20) !important;
+            color: #fff !important;
+        }
+
+        .main-panel{
+            min-height: calc(100vh - 44px);
+            padding: 28px;
+            border-radius: 28px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .page-title{
+            color: #fff;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle{
+            color: var(--text-soft) !important;
+            margin-bottom: 0;
+        }
+
+        #icon{
+            font-size: 30px;
+            color: #c4b5fd !important;
+        }
+
+        .glass-card{
+            background: var(--glass-strong);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .export-btn{
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: linear-gradient(135deg, rgba(59,130,246,0.92), rgba(99,102,241,0.88));
+            color: #fff;
+            border-radius: 14px;
+            padding: 10px 18px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(59,130,246,0.18);
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover{
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .table-card{
+            overflow: hidden;
+            background: rgba(255,255,255,0.88);
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .table-card .card-header{
+            background: rgba(255,255,255,0.50) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(15,23,42,0.08);
+            padding: 18px 22px;
+        }
+
+        .table-card .card-header h5{
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .table{
+            margin-bottom: 0;
+        }
+
+        .table thead th{
+            background: rgba(241,245,249,0.86) !important;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(15,23,42,0.08);
+            white-space: nowrap;
+        }
+
+        .table tbody td{
+            color: #1e293b;
+            border-color: rgba(15,23,42,0.06);
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover{
+            background: rgba(96,165,250,0.08);
+        }
+
+        .dropdown-toggle-clean{
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.12);
+            border-radius: 10px;
+            color: #4338ca;
+        }
+
+        .dropdown-menu{
+            border-radius: 16px;
+            border: 1px solid rgba(15,23,42,0.08);
+            box-shadow: 0 14px 35px rgba(15,23,42,0.12);
+            padding: 8px;
+        }
+
+        .dropdown-item{
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .dropdown-item:hover{
+            background: #eef2ff;
+            color: #312e81;
+        }
+
+        .badge{
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            letter-spacing: .2px;
+        }
+
+        .pagination .page-link{
+            border: none;
+            margin: 0 4px;
+            border-radius: 12px !important;
+            color: #fff;
+            background: rgba(255,255,255,0.10);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .pagination .page-item.active .page-link{
+            background: linear-gradient(135deg, rgba(96,165,250,0.92), rgba(139,92,246,0.88));
+            color: #fff;
+        }
+
+        .pagination .page-link:hover{
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+        }
+
+        .modal-content{
+            background: rgba(255,255,255,0.20);
+            border: 1px solid rgba(255,255,255,0.24);
+            border-radius: 24px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.24);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #fff;
+        }
+
+        .modal-header,
+        .modal-footer{
+            border-color: rgba(255,255,255,0.12);
+        }
+
+        .modal-title,
+        .modal-header h5{
+            font-weight: 700;
+        }
+
+        .btn-close{
+            filter: invert(1);
+        }
+
+        .modal-body p,
+        .modal-body span,
+        .modal-body strong{
+            color: #fff;
+        }
+
+        #modalMessage{
+            white-space: pre-wrap;
+            color: rgba(255,255,255,0.92);
+        }
+
+        .modal .form-control,
+        .modal textarea{
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #fff;
+            border-radius: 14px;
+        }
+
+        .modal .form-control::placeholder,
+        .modal textarea::placeholder{
+            color: rgba(255,255,255,0.66);
+        }
+
+        .footer-section{
+            margin: 22px;
+            margin-top: 0;
+            border-radius: 28px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .footer-links li{
+            margin-bottom: 10px;
+        }
+
+        .footer-links a,
+        .footer-bottom-link{
+            text-decoration: none;
+            color: #dbeafe;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover,
+        .footer-bottom-link:hover{
+            color: #ffffff;
+            padding-left: 5px;
+        }
+
+        .social-icons a{
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 45px;
+            height: 45px;
+            margin-right: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.10);
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .social-icons a:hover{
+            background: rgba(37,99,235,0.75);
+            transform: translateY(-5px);
+        }
+
+        .newsletter-box .form-control{
+            border: none;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .newsletter-box .btn{
+            background: #2563eb;
+            border: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .payment-strip{
+            background: rgba(255,255,255,0.08);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .payment-banner{
+            max-width: 280px;
+            height: auto;
+        }
+
+        @media (max-width: 991.98px){
+            .sidebar-panel{
+                min-height: auto;
+                position: relative;
+                top: 0;
+                margin-bottom: 18px;
+            }
+
+            .main-panel{
+                padding: 20px;
+            }
+
+            .footer-section{
+                margin: 16px;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 767.98px){
+            .page-shell{
+                padding: 16px;
+            }
+
+            .main-panel{
+                border-radius: 22px;
+            }
+
+            .table-responsive{
+                border-radius: 0 0 24px 24px;
+            }
+
+            .page-title{
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid page-shell">
+    <div class="row g-4">
+
+        <div class="col-lg-3">
+            <div class="sidebar-panel" id="sidebar">
+                <h3 class="brand-title">Teach2Learn</h3>
+
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'admindashboard' %}" class="nav-link text-white">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'usermanagement' %}" class="nav-link text-white">
+                            <i class="bi bi-person me-2"></i> User Management
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'subscriptions' %}" class="nav-link text-white">
+                            <i class="bi bi-people me-2"></i> Subscription & Payments
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'analytics' %}" class="nav-link text-white">
+                            <i class="bi bi-calendar-event me-2"></i> Analytics & Report
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'support' %}" class="nav-link active text-white">
+                            <i class="bi bi-chat-dots me-2"></i> Support & Feedback
+                        </a>
+                    </li>
+
+                    <li class="nav-item mt-4">
+                        <a href="{% url 'logout' %}" class="nav-link text-danger" id="logout">
+                            <i class="bi bi-box-arrow-right me-2 text-danger"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="main-panel">
+
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div>
+                        <h2 class="fw-bold page-title">
+                            <i class="bi bi-chat-dots-fill me-2" id="icon"></i>Support & Feedback
+                        </h2>
+                        <p class="page-subtitle">
+                            Manage user queries and feedback
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card glass-card border-0 mb-4">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-lg-9">
+                                <p class="mb-0 text-white-50">
+                                    Review support requests, update progress, and open each ticket in a detailed modal view.
+                                </p>
+                            </div>
+                            <div class="col-lg-3">
+                                 <button type="button" class="btn btn-primary" onclick="exportCSV()">
+                        <i class="bi bi-download me-2"></i>
+                        Export CSV
+                    </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card table-card border-0 mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Support Requests</h5>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Phone Number</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for request in page_obj %}
+                                <tr>
+                                    <td>{{ request.name }}</td>
+                                    <td>{{ request.subject }}</td>
+                                    <td>
+                                        {% if request.status == "Resolved" %}
+                                            <span class="badge bg-success">Resolved</span>
+                                        {% elif request.status == "In Progress" %}
+                                            <span class="badge bg-info text-dark">In Progress</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">Open</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ request.mobile }}</td>
+                                    <td>{{ request.created_at|slice:":10" }}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm dropdown-toggle-clean" data-bs-toggle="dropdown">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a class="dropdown-item view-request-btn"
+                                                       href="#"
+                                                       data-name="{{ request.name }}"
+                                                       data-email="{{ request.email }}"
+                                                       data-mobile="{{ request.mobile }}"
+                                                       data-subject="{{ request.subject }}"
+                                                       data-message="{{ request.message }}"
+                                                       data-status="{{ request.status }}"
+                                                       data-created="{{ request.created_at }}"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#viewModal">
+                                                        View Request
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'update_request_status' request.id 'In Progress' %}">
+                                                        Mark In Progress
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'update_request_status' request.id 'Resolved' %}">
+                                                        Mark Resolved
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        No requests found.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                Previous
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                Next
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Support Request</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <p><strong>User:</strong> <span id="modalName"></span></p>
+                <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+                <p><strong>Phone:</strong> <span id="modalMobile"></span></p>
+                <p><strong>Subject:</strong> <span id="modalSubject"></span></p>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                <hr>
+                <p id="modalMessage"></p>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-light px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reply to User</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="text" class="form-control mb-3" placeholder="Subject">
+                <textarea class="form-control" rows="5" placeholder="Response"></textarea>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary px-4">Send Reply</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Request</h5>
+            </div>
+
+            <div class="modal-body text-center">
+                <p>Are you sure you want to delete this support request?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer-section text-white pt-5 pb-3">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <h3 class="fw-bold mb-3">
+                    <i class="bi bi-mortarboard-fill me-2"></i>Teach2Learn
+                </h3>
+
+                <p class="text-light">
+                    Learn, Teach, Connect, and Grow together. Empowering learners
+                    and mentors through skill exchange, live sessions, assignments,
+                    certifications, and collaborative learning.
+                </p>
+
+                <div class="social-icons mt-4">
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <a href="#"><i class="bi bi-github"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5 class="fw-bold mb-3">Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Skills</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h5 class="fw-bold mb-3">Resources</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Sessions</a></li>
+                    <li><a href="#">Assignments</a></li>
+                    <li><a href="#">Certificates</a></li>
+                    <li><a href="#">Progress</a></li>
+                    <li><a href="#">Premium Plans</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <h5 class="fw-bold mb-3">Contact Us</h5>
+
+                <p>
+                    <i class="bi bi-envelope-fill me-2"></i>
+                    support@teach2learn.com
+                </p>
+
+                <p>
+                    <i class="bi bi-telephone-fill me-2"></i>
+                    +91 98765 43210
+                </p>
+
+                <p>
+                    <i class="bi bi-geo-alt-fill me-2"></i>
+                    Telangana, India
+                </p>
+
+                <div class="newsletter-box mt-4">
+                    <h6>Subscribe Newsletter</h6>
+                    <div class="input-group mt-3">
+                        <input
+                            type="email"
+                            class="form-control"
+                            placeholder="Enter your email"
+                        >
+                        <button class="btn btn-primary">
+                            Subscribe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-strip text-center py-3 mb-4 mt-4">
+            <h6 class="fw-semibold mb-3">
+                <i class="bi bi-shield-check me-2"></i>
+                Secure Payments Accepted
+            </h6>
+
+            <img src="{% static 'images/payment.png' %}"
+                 alt="Payment Methods"
+                 class="payment-banner img-fluid">
+        </div>
+
+        <div class="text-center mt-4 pt-3 border-top">
+            <p class="mb-2">
+                © 2026 Teach2Learn. All Rights Reserved.
+            </p>
+
+            <div>
+                <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                <span class="mx-2">|</span>
+                <a href="#" class="footer-bottom-link">Terms & Conditions</a>
+                <span class="mx-2">|</span>
+                <a href="#" class="footer-bottom-link">Refund Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>
+<script>
+function exportCSV() {
+    window.location.href = "{% url 'export_users_csv' %}";
+    setTimeout(function() {
+        window.location.href = "{% url 'support' %}";
+    }, 2000);
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll(".view-request-btn");
+
+    buttons.forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            document.getElementById("modalName").textContent = this.dataset.name;
+            document.getElementById("modalEmail").textContent = this.dataset.email;
+            document.getElementById("modalMobile").textContent = this.dataset.mobile;
+            document.getElementById("modalSubject").textContent = this.dataset.subject;
+            document.getElementById("modalStatus").textContent = this.dataset.status;
+            document.getElementById("modalDate").textContent = this.dataset.created;
+            document.getElementById("modalMessage").textContent = this.dataset.message;
+        });
+    });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

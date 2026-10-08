@@ -1,0 +1,401 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing | Teach2Learn</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+
+    <style>
+        /* Page accent: Pricing leans on orange/amber for the premium tier, blue-gray neutrality for free tier */
+        .pricing-card{
+            padding:40px 32px;
+            height:100%;
+            position:relative;
+        }
+
+        .pricing-card.is-premium{
+            border-color:rgba(249,115,22,0.45);
+            background:linear-gradient(180deg, rgba(249,115,22,0.08), var(--bg-surface) 45%);
+        }
+        .pricing-card.is-premium:hover{
+            border-color:rgba(249,115,22,0.65);
+        }
+
+        .popular-badge{
+            position:absolute;
+            top:2px;
+            left:50%;
+            transform:translateX(-50%);
+            background:linear-gradient(135deg, var(--orange-500), var(--orange-600));
+            color:#fff;
+            font-size:.78rem;
+            font-weight:700;
+            padding:6px 18px;
+            border-radius:var(--radius-pill);
+            box-shadow:var(--shadow-glow-orange);
+            white-space:nowrap;
+        }
+
+        .plan-label{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            font-size:.8rem;
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:.05em;
+            color:var(--blue-400);
+            margin-bottom:10px;
+        }
+        .pricing-card.is-premium .plan-label{ color:var(--orange-400); }
+
+        .plan-title{ font-size:1.5rem; margin-bottom:10px; }
+        .plan-desc{ color:var(--text-muted); font-size:.92rem; min-height:52px; }
+
+        .price-wrap{ margin:22px 0 26px; }
+        .price{ font-size:2.6rem; font-weight:800; color:var(--text-primary); line-height:1; }
+        .price-note{ color:var(--text-muted); font-size:.88rem; margin-top:6px; }
+
+        .feature-list{ list-style:none; padding:0; margin:0 0 28px; }
+        .feature-list li{
+            display:flex; align-items:flex-start; gap:10px;
+            padding:9px 0;
+            font-size:.92rem;
+            color:var(--gray-300);
+            border-bottom:1px solid var(--border-color);
+        }
+        .feature-list li:last-child{ border-bottom:none; }
+        .feature-list .yes{ color:var(--teal-500); margin-top:2px; }
+        .feature-list .no{ color:var(--gray-500); margin-top:2px; }
+        .feature-list li:has(.no){ color:var(--gray-500); }
+
+        .btn-plan{ width:100%; padding:14px 20px; font-size:1rem; }
+
+        .btn-free{
+            background:transparent;
+            color:var(--text-primary);
+            border:1.5px solid var(--border-color);
+        }
+        .btn-free:hover{
+            border-color:var(--blue-500);
+            background:rgba(59,130,246,0.10);
+            transform:translateY(-2px);
+        }
+
+        .mini-highlight{
+            margin-top:56px;
+            text-align:center;
+        }
+        .mini-highlight h5{ font-weight:800; margin-bottom:8px; }
+        .mini-highlight p{ color:var(--text-muted); margin:0; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg t2l-navbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand t2l-brand" href="{% url 'home' %}">
+            <span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
+            Teach2Learn
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'howitworks' %}">How it Works</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'pricing' %}">Pricing</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown ms-lg-2">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-circle-user"></i> {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end t2l-dropdown" aria-labelledby="accountDropdown">
+                        <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item ms-lg-2"><a class="btn btn-secondary-outline btn-sm px-3" href="{% url 'login_view' %}">Login</a></li>
+                <li class="nav-item ms-lg-2"><a class="btn btn-main btn-sm px-3" href="{% url 'register' %}">Create Account</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="container position-relative">
+        <span class="section-eyebrow" data-reveal><i class="bi bi-stars"></i> Flexible plans for every learner</span>
+        <h1 data-reveal>Choose the plan that fits your learning journey</h1>
+        <p data-reveal>
+            Start free to explore Teach2Learn, or unlock premium tools for unlimited sessions,
+            certifications, advanced analytics, and priority mentor matching.
+        </p>
+    </div>
+</section>
+
+<!-- Pricing Cards -->
+<section class="section-sm" id="pricing">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+
+            <!-- Free Plan -->
+            <div class="col-lg-5 col-md-10">
+                <div class="t2l-card pricing-card" data-reveal>
+                    <div class="plan-label"><i class="bi bi-stars"></i> Free Access</div>
+                    <h3 class="plan-title">Free Plan</h3>
+                    <p class="plan-desc">
+                        Best for new users who want to begin learning, create a profile, and try the platform.
+                    </p>
+
+                    <div class="price-wrap">
+                        <div class="price">₹0</div>
+                        <div class="price-note">Forever free</div>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li><i class="bi bi-check-circle-fill yes"></i> Create profile</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Add up to 3 learning skills</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Add up to 2 teaching skills</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> 5 learning sessions per month</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Basic chat and messaging</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Assignment submission</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Resource downloads</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Progress tracking</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Community support</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Certificates</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Unlimited sessions</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Premium resources</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Priority matching</li>
+                        <li><i class="bi bi-x-circle-fill no"></i> Advanced analytics</li>
+                    </ul>
+
+                    <a href="{% url 'register' %}" class="btn btn-plan btn-free">Get Started Free</a>
+                </div>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="col-lg-5 col-md-10">
+                <div class="t2l-card pricing-card is-premium" data-reveal>
+                    <span class="popular-badge">Most Popular</span>
+
+                    <div class="plan-label"><i class="bi bi-gem"></i> Premium Access</div>
+                    <h3 class="plan-title">Premium Plan</h3>
+                    <p class="plan-desc">
+                        Ideal for serious learners and mentors who want unlimited access, better visibility, and premium growth tools.
+                    </p>
+
+                    <div class="price-wrap">
+                        <div class="price">₹299</div>
+                        <div class="price-note">Per month</div>
+                    </div>
+
+                    <ul class="feature-list">
+                        <li><i class="bi bi-check-circle-fill yes"></i> Everything in Free Plan</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Unlimited learning skills</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Unlimited teaching skills</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Unlimited sessions</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Unlimited chat and messaging</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Assignment and project sharing</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Large file uploads</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Certificate generation</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Download certificates</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Premium learning resources</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Priority mentor matching</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Advanced progress analytics</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Premium support</li>
+                        <li><i class="bi bi-check-circle-fill yes"></i> Early access to new features</li>
+                    </ul>
+
+                    <button type="button" id="upgrade-btn" class="btn btn-plan btn-main">
+                        <i class="bi bi-lightning-charge-fill me-1"></i> Upgrade Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Razorpay hidden form (kept functionally identical to original) -->
+        <form action="{% url 'payment_success' %}" method="POST" id="razorpay-form">
+            {% csrf_token %}
+            <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+            <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+            <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+        </form>
+
+        <div class="mini-highlight mx-auto col-lg-9" data-reveal>
+            <h5>Simple pricing, practical value</h5>
+            <p>
+                Whether you are a student, developer, mentor, or professional, Teach2Learn gives you a
+                flexible way to start small and upgrade only when you need advanced learning tools.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Section -->
+<footer class="footer-section text-white pt-5 pb-3">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-reveal>
+                <h3 class="fw-bold mb-3">
+                    <i class="bi bi-mortarboard-fill me-2" style="color:var(--orange-400);"></i>Teach2Learn
+                </h3>
+                <p class="text-light" style="color:var(--gray-400) !important;">
+                    Learn, Teach, Connect, and Grow together. Empowering learners
+                    and mentors through skill exchange, live sessions, assignments,
+                    certifications, and collaborative learning.
+                </p>
+                <div class="social-icons mt-4">
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <a href="#"><i class="bi bi-github"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
+                    <li><a href="{% url 'howitworks' %}">How It Works</a></li>
+                    <li><a href="{% url 'pricing' %}">Pricing</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Resources</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Sessions</a></li>
+                    <li><a href="#">Assignments</a></li>
+                    <li><a href="#">Certificates</a></li>
+                    <li><a href="#">Progress</a></li>
+                    <li><a href="#">Premium Plans</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Contact Us</h5>
+                <p><i class="bi bi-envelope-fill me-2"></i>support@teach2learn.com</p>
+                <p><i class="bi bi-telephone-fill me-2"></i>+91 98765 43210</p>
+                <p><i class="bi bi-geo-alt-fill me-2"></i>Telangana, India</p>
+
+                <div class="newsletter-box mt-4">
+                    <h6>Subscribe Newsletter</h6>
+                    <div class="input-group mt-3">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-main">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-strip text-center py-3 mb-4 mt-4">
+            <h6 class="fw-semibold mb-3">
+                <i class="bi bi-shield-check me-2" style="color:var(--orange-400);"></i>
+                Secure Payments Accepted
+            </h6>
+            <img src="{% static 'images/payment.png' %}" alt="Payment Methods" class="payment-banner img-fluid mx-auto d-block">
+        </div>
+
+        <div class="text-center mt-4 pt-3 border-top" style="border-color:var(--border-color) !important;">
+            <p class="mb-2" style="color:var(--gray-400);">© 2026 Teach2Learn. All Rights Reserved.</p>
+            <div>
+                <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                <span class="mx-2 text-muted">|</span>
+                <a href="#" class="footer-bottom-link">Terms &amp; Conditions</a>
+                <span class="mx-2 text-muted">|</span>
+                <a href="#" class="footer-bottom-link">Refund Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("upgrade-btn");
+    if (!btn) return;
+
+    btn.addEventListener("click", async function (e) {
+        e.preventDefault();
+
+        const response = await fetch("/create-order/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ amount: 299 })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.error || "Order creation failed");
+            return;
+        }
+
+        const options = {
+            key: data.key,
+            amount: data.amount,
+            currency: data.currency,
+            order_id: data.order_id,
+            name: "Teach2Learn",
+            description: "Premium Upgrade",
+            prefill: { email: "{{ user.email }}" },
+            theme: { color: "#f97316" },
+            handler: function (response) {
+                document.getElementById("razorpay_payment_id").value = response.razorpay_payment_id;
+                document.getElementById("razorpay_order_id").value = response.razorpay_order_id;
+                document.getElementById("razorpay_signature").value = response.razorpay_signature;
+                document.getElementById("razorpay-form").submit();
+            }
+        };
+
+        if (typeof Razorpay === "undefined") {
+            alert("Razorpay SDK not loaded");
+            return;
+        }
+
+        const rzp = new Razorpay(options);
+
+        rzp.on("payment.failed", function (response) {
+            alert(
+                "Code : " + response.error.code +
+                "\nDescription : " + response.error.description +
+                "\nSource : " + response.error.source +
+                "\nStep : " + response.error.step +
+                "\nReason : " + response.error.reason +
+                "\nPayment ID : " + response.error.metadata.payment_id +
+                "\nOrder ID : " + response.error.metadata.order_id
+            );
+        });
+
+        rzp.open();
+    });
+});
+</script>
+<script src="{% static 'js/animations.js' %}"></script>
+</body>
+</html>

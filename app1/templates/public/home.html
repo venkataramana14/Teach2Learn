@@ -1,0 +1,934 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teach2Learn | Learn. Teach. Grow.</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+
+    <style>
+        /* ===== Hero ===== */
+        .hero{ position:relative; padding:130px 0 90px; overflow:hidden; }
+        .hero::before{
+            content:"";
+            position:absolute; inset:0;
+            background:
+                radial-gradient(750px 420px at 8% -10%, rgba(59,130,246,0.14), transparent 60%),
+                radial-gradient(700px 400px at 100% 10%, rgba(249,115,22,0.14), transparent 60%);
+            pointer-events:none;
+        }
+        .hero-grid{ position:relative; display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; }
+        @media (max-width:991px){ .hero-grid{ grid-template-columns:1fr; } }
+
+        .hero-eyebrow{
+            display:inline-flex; align-items:center; gap:8px;
+            padding:7px 16px; border-radius:var(--radius-pill);
+            background:rgba(249,115,22,0.12); border:1px solid rgba(249,115,22,0.3);
+            color:var(--orange-400); font-size:.8rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:.05em; margin-bottom:20px;
+        }
+        .hero-title{ font-size:clamp(2.2rem,4.4vw,3.4rem); font-weight:800; line-height:1.12; margin-bottom:18px; }
+        .hero-title em{ font-style:normal; color:var(--orange-400); }
+        .hero-copy{ color:var(--text-muted); font-size:1.08rem; max-width:560px; margin-bottom:30px; }
+        .hero-actions{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:40px; }
+
+        .hero-stats{ display:flex; gap:38px; flex-wrap:wrap; }
+        .hero-stats .stat strong{ display:block; font-size:1.7rem; font-weight:800; color:var(--text-primary); }
+        .hero-stats .stat span{ color:var(--text-muted); font-size:.85rem; }
+
+        /* Hero visual */
+        .hero-visual{ position:relative; }
+        .visual-orb{
+            position:absolute; width:340px; height:340px; border-radius:50%;
+            background:radial-gradient(circle, rgba(59,130,246,0.18), transparent 70%);
+            top:-40px; right:-40px; filter:blur(6px); pointer-events:none;
+        }
+
+        .profile-card{
+            position:relative; z-index:2;
+            display:flex; align-items:center; gap:12px;
+            background:var(--bg-surface); border:1px solid var(--border-color);
+            border-radius:var(--radius-md); padding:12px 16px;
+            box-shadow:var(--shadow-md); max-width:220px;
+        }
+        .profile-card img{ width:46px;height:46px;border-radius:50%; object-fit:cover; }
+        .profile-card .profile-meta{ display:flex; flex-direction:column; }
+        .profile-card .name{ font-weight:700; color:var(--text-primary); font-size:.9rem; }
+        .profile-card .role{ font-size:.78rem; color:var(--text-muted); }
+        .status-dot{ position:absolute; top:10px; right:10px; width:9px;height:9px;border-radius:50%; background:var(--teal-500); }
+        .status-dot.pulse::after{
+            content:""; position:absolute; inset:0; border-radius:50%; background:var(--teal-500);
+            animation:pulseDot 1.8s ease-out infinite;
+        }
+        @keyframes pulseDot{ 0%{ transform:scale(1); opacity:.7;} 100%{ transform:scale(2.6); opacity:0;} }
+
+        .mentor-card{ margin-bottom:18px; margin-left:10px; }
+        .learner-card{ margin-left:auto; margin-right:10px; margin-bottom:22px; }
+
+        .session-card{
+            position:relative; z-index:2;
+            background:var(--bg-surface); border:1px solid var(--border-color);
+            border-radius:var(--radius-lg); padding:22px; box-shadow:var(--shadow-lg);
+        }
+        .session-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+        .session-head h3{ font-size:1rem; margin:0; }
+        .live-badge{
+            display:inline-flex; align-items:center; gap:6px;
+            background:rgba(239,68,68,0.14); color:#fca5a5;
+            font-size:.72rem; font-weight:700; padding:4px 10px; border-radius:var(--radius-pill);
+        }
+        .live-badge::before{ content:""; width:6px;height:6px;border-radius:50%; background:#f87171; }
+
+        .session-waveform{ display:flex; align-items:flex-end; gap:3px; height:36px; margin-bottom:16px; }
+        .session-waveform span{
+            flex:1; background:linear-gradient(180deg, var(--orange-400), var(--orange-600));
+            border-radius:3px; animation:wave 1.4s ease-in-out infinite;
+        }
+        .session-waveform span:nth-child(odd){ animation-delay:.15s; }
+        .session-waveform span:nth-child(3n){ animation-delay:.3s; }
+        @keyframes wave{ 0%,100%{ height:20%; } 50%{ height:100%; } }
+
+        .session-participants{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+        .session-avatars img{ width:30px;height:30px;border-radius:50%; border:2px solid var(--bg-surface); object-fit:cover; margin-left:-8px; }
+        .session-avatars img:first-child{ margin-left:0; }
+        .session-timer{ display:flex; align-items:center; gap:6px; color:var(--text-muted); font-size:.85rem; }
+        .session-timer svg{ width:16px;height:16px; }
+
+        .session-controls{ display:flex; gap:10px; }
+        .ctrl{
+            width:40px;height:40px;border-radius:12px; border:1px solid var(--border-color);
+            background:var(--bg-surface-2); color:var(--gray-300);
+            display:flex; align-items:center; justify-content:center;
+            transition:background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+        }
+        .ctrl svg{ width:18px;height:18px; }
+        .ctrl:hover{ transform:translateY(-2px); }
+        .ctrl.active{ background:rgba(59,130,246,0.16); border-color:rgba(59,130,246,0.35); color:var(--blue-400); }
+        .ctrl.end{ background:rgba(239,68,68,0.14); border-color:rgba(239,68,68,0.3); color:#fca5a5; margin-left:auto; }
+
+        /* ===== Features ===== */
+        .feature-card{ padding:30px 26px; height:100%; }
+        .feature-card h5{ color:var(--text-primary); }
+        .feature-card p{ color:var(--text-muted); font-size:.92rem; }
+
+        /* ===== How it works / skill flow ===== */
+        .skill-flow{
+            background:var(--bg-surface); border:1px solid var(--border-color);
+            border-radius:var(--radius-lg); padding:56px 34px;
+        }
+        .skill-flow .feature-card{ background:var(--bg-surface-2); border:1px solid var(--border-color); }
+        .process-line{ width:70px; height:4px; border-radius:20px; background:linear-gradient(90deg, var(--orange-500), var(--blue-500)); margin:34px auto; }
+        .match-card{ background:var(--bg-surface-2); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:18px; height:100%; }
+        .match-card h6{ color:var(--text-primary); }
+
+        /* ===== AI Section ===== */
+        .ai-section{
+            background:linear-gradient(135deg, var(--navy-700) 0%, var(--navy-900) 100%);
+            border:1px solid var(--border-color);
+            border-radius:var(--radius-lg); overflow:hidden;
+        }
+        .ai-section h2{ color:#fff; }
+        .ai-section p{ color:var(--gray-300); }
+        .ai-section .badge{ background:rgba(255,255,255,0.12); color:#fff; font-weight:600; border:1px solid rgba(255,255,255,0.18); }
+        .score-box h3{ color:var(--orange-400); }
+        .score-box p{ color:var(--gray-300); }
+
+        /* ===== Testimonials ===== */
+        .testimonial-card{ padding:28px; height:100%; }
+        .testimonial-card img{ width:52px;height:52px;border-radius:50%; object-fit:cover; }
+        .testimonial-card h6{ color:var(--text-primary); }
+        .testimonial-card p{ color:var(--text-muted); font-size:.92rem; }
+
+        /* ===== Skills carousel ===== */
+        .skills-section{ background:var(--bg-surface); border-top:1px solid var(--border-color); border-bottom:1px solid var(--border-color); }
+        .skills-carousel{ overflow:hidden; position:relative; }
+        .skills-carousel::before,.skills-carousel::after{
+            content:""; position:absolute; top:0; bottom:0; width:80px; z-index:2; pointer-events:none;
+        }
+        .skills-carousel::before{ left:0; background:linear-gradient(90deg, var(--bg-surface), transparent); }
+        .skills-carousel::after{ right:0; background:linear-gradient(270deg, var(--bg-surface), transparent); }
+        .skills-track{ display:flex; gap:24px; width:max-content; will-change:transform; }
+        .skill-slide{ width:260px; flex:0 0 auto; }
+        .skill-slide .card{ transition:transform var(--dur-med) var(--ease), box-shadow var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease); opacity:.75; }
+        .skill-slide.is-active .card,
+        .skill-slide:hover .card{ opacity:1; border-color:rgba(249,115,22,0.4); }
+        .more-info-btn{ font-weight:600; }
+
+        /* ===== CTA ===== */
+        .home-cta{
+            background:linear-gradient(135deg, var(--orange-600), var(--orange-500));
+        }
+        .home-cta h2,.home-cta p{ color:#fff; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg t2l-navbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand t2l-brand" href="{% url 'home' %}">
+            <span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
+            Teach2Learn
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'howitworks' %}">How it Works</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'pricing' %}">Pricing</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+
+             
+         {% if user.is_authenticated %}
+                <li class="nav-item dropdown ms-lg-2">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-circle-user"></i> {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end t2l-dropdown" aria-labelledby="accountDropdown">
+                        <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item ms-lg-2"><a class="btn btn-secondary-outline btn-sm px-3" href="{% url 'login_view' %}">Login</a></li>
+                <li class="nav-item ms-lg-2"><a class="btn btn-main btn-sm px-3" href="{% url 'register' %}">Create Account</a></li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="container hero-grid">
+
+        <div class="hero-content">
+            <span class="hero-eyebrow" data-reveal><i class="bi bi-broadcast"></i> Peer-to-peer learning for real growth</span>
+            <h1 class="hero-title" data-reveal>Teach what you know. <em>Learn</em> what you need.</h1>
+            <p class="hero-copy" data-reveal>
+                Teach2Learn connects students, developers, designers, and professionals for live
+                skill exchange — real sessions, real mentors, real feedback — so growth happens
+                through collaboration, not another unfinished course.
+            </p>
+
+            <div class="hero-actions" data-reveal>
+                <a href="{% url 'register' %}" class="btn btn-main btn-lg">Join the Platform</a>
+                <a href="#how-it-works" class="btn btn-secondary-outline btn-lg">See How It Works</a>
+            </div>
+
+            <div class="hero-stats" data-reveal>
+                <div class="stat"><strong>10k+</strong><span>Skill Matches</span></div>
+                <div class="stat"><strong>25k+</strong><span>Sessions Done</span></div>
+                <div class="stat"><strong>5k+</strong><span>Certificates</span></div>
+            </div>
+        </div>
+
+        <div class="hero-visual" data-reveal>
+            <div class="visual-orb" aria-hidden="true"></div>
+
+            <article class="profile-card mentor-card">
+                <span class="status-dot pulse" aria-hidden="true"></span>
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" alt="Mentor teaching React.js on a live call">
+                <div class="profile-meta">
+                    <span class="name">Rahul&nbsp;V.</span>
+                    <span class="role">Mentor</span>
+                </div>
+            </article>
+
+            <article class="profile-card learner-card">
+                <span class="status-dot pulse" aria-hidden="true"></span>
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=400&q=80" alt="Learner attending a live UI/UX session">
+                <div class="profile-meta">
+                    <span class="name">Sneha&nbsp;J.</span>
+                    <span class="role">Learner</span>
+                </div>
+            </article>
+
+            <div class="session-card">
+                <div class="session-head">
+                    <h3>React.js Mentoring</h3>
+                    <span class="live-badge">Live now</span>
+                </div>
+
+                <div class="session-waveform" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+
+                <div class="session-participants">
+                    <div class="session-avatars">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80" alt="">
+                    </div>
+                    <span class="session-timer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                        <span id="sessionClock">05:39</span>
+                    </span>
+                </div>
+
+                <div class="session-controls">
+                    <button class="ctrl active" title="Mute">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/><path d="M19 11a7 7 0 0 1-14 0"/><path d="M12 18v3"/></svg>
+                    </button>
+                    <button class="ctrl" title="Camera">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="M16 10.5 22 7v10l-6-3.5Z"/></svg>
+                    </button>
+                    <button class="ctrl" title="Raise hand">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 12V6a2 2 0 1 1 4 0v5"/><path d="M12 11V4a2 2 0 1 1 4 0v7"/><path d="M16 11.5V7a2 2 0 1 1 4 0v7c0 3.5-2.5 6.5-6 6.5h-1c-3 0-4.5-1-6-3l-2.8-4.2a1.7 1.7 0 0 1 2.6-2.2L8 13"/></svg>
+                    </button>
+                    <button class="ctrl end" title="Leave session">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 8 4-2 3 5-2 2c1 2 3 4 5 5l2-2 5 3-2 4c-8 1-16-7-15-15Z" transform="rotate(135 12 12)"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="section" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-eyebrow" data-reveal>Why Teach2Learn</span>
+            <h2 class="section-title mx-auto" data-reveal>A complete learning ecosystem</h2>
+            <p class="section-subtitle mx-auto" data-reveal>
+                More than a course platform — Teach2Learn combines peer learning, mentorship, collaboration,
+                AI support, and certification into one practical experience.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="t2l-card feature-card">
+                    <div class="icon-box">01</div>
+                    <h5>Smart Skill Matching</h5>
+                    <p class="mb-0">Match users based on what they teach and what they want to learn, making knowledge exchange simple and relevant.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="t2l-card feature-card">
+                    <div class="icon-box is-blue">02</div>
+                    <h5>Live Sessions &amp; Scheduling</h5>
+                    <p class="mb-0">Plan learning sessions, manage availability, and join discussions with clear scheduling flows.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="t2l-card feature-card">
+                    <div class="icon-box is-teal">03</div>
+                    <h5>Assignments &amp; Progress</h5>
+                    <p class="mb-0">Track completed sessions, assignment submissions, and skill progress through a clean dashboard.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6">
+                <div class="t2l-card feature-card">
+                    <div class="icon-box is-amber">04</div>
+                    <h5>AI Mock Interviews</h5>
+                    <p class="mb-0">Practice technical, HR, and coding rounds with AI-generated questions, performance scoring, and actionable feedback.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6">
+                <div class="t2l-card feature-card">
+                    <div class="icon-box">05</div>
+                    <h5>Certificates, Reviews &amp; Credibility</h5>
+                    <p class="mb-0">Earn verified certificates, receive ratings and reviews, and build a trusted public profile.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="section pt-0" id="how-it-works">
+    <div class="container">
+        <div class="skill-flow" data-reveal>
+            <div class="text-center mb-5">
+                <span class="section-eyebrow is-blue">Simple process</span>
+                <h2 class="section-title mx-auto">How Teach2Learn works</h2>
+                <p class="section-subtitle mx-auto">
+                    Start with your skills, get matched with the right learner-partner, collaborate in sessions,
+                    and prove your growth through projects and certification.
+                </p>
+            </div>
+
+            <div class="row g-4 text-center">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="icon-box mx-auto">1</div>
+                        <h5>Create Profile</h5>
+                        <p class="mb-0">Add your teach skills, learn skills, bio, and portfolio links.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="icon-box mx-auto is-blue">2</div>
+                        <h5>Get Matched</h5>
+                        <p class="mb-0">Discover compatible users through smart skill exchange recommendations.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="icon-box mx-auto is-teal">3</div>
+                        <h5>Learn Together</h5>
+                        <p class="mb-0">Schedule sessions, chat in real time, and work on assignments.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="icon-box mx-auto is-amber">4</div>
+                        <h5>Grow &amp; Get Certified</h5>
+                        <p class="mb-0">Take AI mock interviews, improve performance, and earn certificates.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="process-line"></div>
+
+            <div class="row align-items-center mt-4 g-4">
+                <div class="col-lg-5">
+                    <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80"
+                         alt="People discussing and learning together"
+                         class="img-fluid rounded-4 shadow-sm" data-reveal>
+                </div>
+                <div class="col-lg-7">
+                    <h3 class="fw-bold mb-3" data-reveal>Exchange skills without expensive course fees</h3>
+                    <p class="text-warning" data-reveal>
+                        Teach2Learn is built for students, developers, designers, freelancers, and professionals
+                        who want practical growth through collaboration instead of isolated content consumption.
+                    </p>
+                    <div class="row g-3 mt-2">
+                        <div class="col-sm-6"><div class="match-card"><h6>Real-time chat</h6><p class="text-warning mb-0 small">Discuss lessons, files, doubts, and feedback instantly.</p></div></div>
+                        <div class="col-sm-6"><div class="match-card"><h6>Project-based learning</h6><p class="text-warning mb-0 small">Practice through assignments and real task submissions.</p></div></div>
+                        <div class="col-sm-6"><div class="match-card"><h6>Doubt clarification</h6><p class="text-warning mb-0 small">Book support sessions whenever you get stuck.</p></div></div>
+                        <div class="col-sm-6"><div class="match-card"><h6>Premium growth tools</h6><p class="text-warning mb-0 small">Unlock AI interviews, certificates, and unlimited matches.</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI Section -->
+<section class="section pt-0">
+    <div class="container">
+        <div class="ai-section" data-reveal>
+            <div class="row align-items-center g-0">
+                <div class="col-lg-6 p-5">
+                    <span class="badge rounded-pill px-3 py-2 mb-3">AI Assisted Learning</span>
+                    <h2 class="section-title">Prepare for real opportunities with AI mock interviews</h2>
+                    <p class="mb-4">
+                        Practice skill-based interviews, receive performance scores, and get personalized feedback
+                        that helps you improve confidence before real placements, freelance calls, or job interviews.
+                    </p>
+                    <a href="{% url 'pricing' %}" class="btn btn-main btn-lg">Try Premium Features</a>
+                </div>
+                <div class="col-lg-6 p-5">
+                    <div class="row g-3">
+                        <div class="col-sm-6"><div class="score-box"><h3>92%</h3><p class="mb-0">Interview Readiness</p></div></div>
+                        <div class="col-sm-6"><div class="score-box"><h3>150+</h3><p class="mb-0">Skill-based Questions</p></div></div>
+                        <div class="col-12">
+                            <div class="score-box text-start">
+                                <h5 class="fw-bold mb-2">Sample feedback</h5>
+                                <p class="mb-0">Your answer structure is clear. Improve confidence by adding real project examples and stronger problem-solving explanation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section" id="reviews">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-eyebrow is-blue" data-reveal>Testimonials</span>
+            <h2 class="section-title mx-auto" data-reveal>What learners say</h2>
+            <p class="section-subtitle mx-auto" data-reveal>
+                People join Teach2Learn to exchange skills, gain practical experience, and build confidence together.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="t2l-card testimonial-card">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" alt="Student testimonial">
+                        <div><h6 class="mb-0">Ananya Reddy</h6><small class="text-muted">UI/UX Learner</small></div>
+                    </div>
+                    <p class="mb-0">I taught HTML and CSS while learning UI/UX from another user. The platform made the exchange feel structured and motivating.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="t2l-card testimonial-card">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" alt="Developer testimonial">
+                        <div><h6 class="mb-0">Rahul Varma</h6><small class="text-muted">React Developer</small></div>
+                    </div>
+                    <p class="mb-0">The AI mock interview and progress tracking gave me clarity on where I stood. It feels more useful than just watching tutorials.</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="t2l-card testimonial-card">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80" alt="Freelancer testimonial">
+                        <div><h6 class="mb-0">Sneha Joseph</h6><small class="text-muted">Freelancer</small></div>
+                    </div>
+                    <p class="mb-0">I liked that I could learn through sessions, assignments, and doubt support, then show my work through ratings and certificates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Skills -->
+<section class="section skills-section" id="skills">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-eyebrow" data-reveal><i class="bi bi-fire"></i> Trending</span>
+            <h2 class="section-title mx-auto" data-reveal>Trending Skills</h2>
+        </div>
+
+        <div class="skills-carousel" id="skillsCarousel">
+            <div class="skills-track" id="skillsTrack">
+
+                <div class="skill-slide">
+                    <div class="card border-0">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500" class="card-img-top" alt="">
+                        <div class="card-body text-center">
+                            <h5>Artificial Intelligence</h5>
+                            <a href="https://www.coursera.org/courses?query=artificial%20intelligence" class="btn btn-sm btn-soft more-info-btn mt-2" target="_blank" rel="noopener">More Info</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-slide">
+                    <div class="card border-0">
+                        <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=500" class="card-img-top" alt="">
+                        <div class="card-body text-center">
+                            <h5>Machine Learning</h5>
+                            <a href="https://www.coursera.org/courses?query=machine%20learning" class="btn btn-sm btn-soft more-info-btn mt-2" target="_blank" rel="noopener">More Info</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-slide">
+                    <div class="card border-0">
+                        <img src="https://media.istockphoto.com/id/513320180/photo/word-react-on-wood-planks.webp?a=1&b=1&s=612x612&w=0&k=20&c=QuIWK4rSvs7Idvbu5ZC2ZROyPCBd9g2Q1eb3HK-YETI=" class="card-img-top" alt="">
+                        <div class="card-body text-center">
+                            <h5>React</h5>
+                            <a href="https://react.dev/learn" class="btn btn-sm btn-soft more-info-btn mt-2" target="_blank" rel="noopener">More Info</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-slide">
+                    <div class="card border-0">
+                        <img src="https://plus.unsplash.com/premium_photo-1733306493254-52b143296396?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8Y2xvdWQlMjBzdG9yYWdlfGVufDB8fDB8fHww" class="card-img-top" alt="">
+                        <div class="card-body text-center">
+                            <h5>AWS Cloud</h5>
+                            <a href="https://aws.amazon.com/training/" class="btn btn-sm btn-soft more-info-btn mt-2" target="_blank" rel="noopener">More Info</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-slide">
+                    <div class="card border-0">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500" class="card-img-top" alt="">
+                        <div class="card-body text-center">
+                            <h5>Data Analytics</h5>
+                            <a href="https://www.coursera.org/courses?query=data%20analytics" class="btn btn-sm btn-soft more-info-btn mt-2" target="_blank" rel="noopener">More Info</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-slide">
+                    <div class="card border-0">
+                        <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500" class="card-img-top" alt="">
+                        <div class="card-body text-center">
+                            <h5>Full Stack Development</h5>
+                            <a href="https://www.freecodecamp.org/" class="btn btn-sm btn-soft more-info-btn mt-2" target="_blank" rel="noopener">More Info</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-slide">
+                    <div class="card border-0">
+                        <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500" class="card-img-top" alt="">
+                        <div class="card-body text-center">
+                            <h5>Deep Learning</h5>
+                            <a href="https://www.coursera.org/courses?query=deep%20learning" class="btn btn-sm btn-soft more-info-btn mt-2" target="_blank" rel="noopener">More Info</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-slide">
+                    <div class="card border-0">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500" class="card-img-top" alt="">
+                        <div class="card-body text-center">
+                            <h5>Digital Learning</h5>
+                            <a href="https://www.edx.org/" class="btn btn-sm btn-soft more-info-btn mt-2" target="_blank" rel="noopener">More Info</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 text-center home-cta">
+    <div class="container">
+        <h2 class="fw-bold" data-reveal>Ready To Start Your Learning Journey?</h2>
+        <p class="lead my-4" data-reveal>Join thousands of learners and mentors on Teach2Learn.</p>
+        <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 fw-semibold" data-reveal>Register Now</a>
+    </div>
+</section>
+
+<!-- Footer Section -->
+<footer class="footer-section text-white pt-5 pb-3">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-reveal>
+                <h3 class="fw-bold mb-3">
+                    <i class="bi bi-mortarboard-fill me-2" style="color:var(--orange-400);"></i>Teach2Learn
+                </h3>
+                <p class="text-light" style="color:var(--gray-400) !important;">
+                    Learn, Teach, Connect, and Grow together. Empowering learners
+                    and mentors through skill exchange, live sessions, assignments,
+                    certifications, and collaborative learning.
+                </p>
+                <div class="social-icons mt-4">
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <a href="#"><i class="bi bi-github"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
+                    <li><a href="{% url 'howitworks' %}">How It Works</a></li>
+                    <li><a href="{% url 'pricing' %}">Pricing</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Resources</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Sessions</a></li>
+                    <li><a href="#">Assignments</a></li>
+                    <li><a href="#">Certificates</a></li>
+                    <li><a href="#">Progress</a></li>
+                    <li><a href="#">Premium Plans</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-reveal>
+                <h5 class="fw-bold mb-3">Contact Us</h5>
+                <p><i class="bi bi-envelope-fill me-2"></i>support@teach2learn.com</p>
+                <p><i class="bi bi-telephone-fill me-2"></i>+91 98765 43210</p>
+                <p><i class="bi bi-geo-alt-fill me-2"></i>Telangana, India</p>
+
+                <div class="newsletter-box mt-4">
+                    <h6>Subscribe Newsletter</h6>
+                    <div class="input-group mt-3">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-main">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-strip text-center py-3 mb-4 mt-4">
+            <h6 class="fw-semibold mb-3">
+                <i class="bi bi-shield-check me-2" style="color:var(--orange-400);"></i>
+                Secure Payments Accepted
+            </h6>
+            <img src="{% static 'images/payment.png' %}" alt="Payment Methods" class="payment-banner img-fluid mx-auto d-block">
+        </div>
+
+        <div class="text-center mt-4 pt-3 border-top" style="border-color:var(--border-color) !important;">
+            <p class="mb-2" style="color:var(--gray-400);">© 2026 Teach2Learn. All Rights Reserved.</p>
+            <div>
+                <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                <span class="mx-2 text-muted">|</span>
+                <a href="#" class="footer-bottom-link">Terms &amp; Conditions</a>
+                <span class="mx-2 text-muted">|</span>
+                <a href="#" class="footer-bottom-link">Refund Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const carousel = document.getElementById("skillsCarousel");
+    const track = document.getElementById("skillsTrack");
+
+    if (!carousel || !track) return;
+
+    track.innerHTML += track.innerHTML;
+
+    let slides = Array.from(track.children);
+    let position = 0;
+    let paused = false;
+    let slideW = 0;
+    let lastActiveIndex = -1;
+
+    const speed = 1.2;
+    let lastTime = 0;
+
+    function measure() {
+        const slide = slides[0];
+        if (!slide) return;
+
+        const style = getComputedStyle(slide);
+        slideW =
+            slide.offsetWidth +
+            parseFloat(style.marginLeft) +
+            parseFloat(style.marginRight) + 24;
+    }
+
+    function updateActive() {
+        if (!slideW) return;
+
+        const centerOffset = carousel.offsetWidth / 2;
+        const activeIndex =
+            Math.round((position + centerOffset - slideW / 2) / slideW) % slides.length;
+
+        if (activeIndex === lastActiveIndex) return;
+
+        if (lastActiveIndex >= 0) {
+            slides[lastActiveIndex].classList.remove("is-active");
+        }
+
+        slides[activeIndex]?.classList.add("is-active");
+        lastActiveIndex = activeIndex;
+    }
+
+    function animate(time) {
+        if (!lastTime) lastTime = time;
+        const delta = time - lastTime;
+        lastTime = time;
+
+        if (!paused) {
+            position += (speed * delta) / 16.67;
+
+            const half = track.scrollWidth / 2;
+            if (position >= half) {
+                position = 0;
+            }
+
+            track.style.transform = `translate3d(${-position}px, 0, 0)`;
+
+            if (Math.abs(position % slideW) < speed * 2) {
+                updateActive();
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    measure();
+    updateActive();
+    requestAnimationFrame(animate);
+
+    window.addEventListener("resize", measure);
+
+    carousel.addEventListener("mouseenter", () => paused = true);
+    carousel.addEventListener("mouseleave", () => paused = false);
+    carousel.addEventListener("touchstart", () => paused = true, { passive: true });
+    carousel.addEventListener("touchend", () => paused = false);
+});
+
+/* ==========================================================================
+   TEACH2LEARN — ANIMATION SYSTEM (vanilla JS)
+   Page-load fade, scroll reveals, stagger, micro-interactions.
+   No color cycling. No flashing. Respects prefers-reduced-motion.
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------------------------------------------------------------
+     1. Page-load fade-in
+     ------------------------------------------------------------------- */
+  function pageLoadFade() {
+    document.documentElement.classList.add("t2l-ready");
+    requestAnimationFrame(function () {
+      document.body.classList.add("t2l-loaded");
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     2. Auto-tag reveal targets
+     Any of these selectors get [data-reveal] automatically if the author
+     didn't already add it by hand in the template.
+     ------------------------------------------------------------------- */
+  function autoTagReveals() {
+    var selector = [
+      "section .card", ".t2l-card",
+      "section h1", "section h2", "section .section-title",
+      "section p", "section form",
+      ".profile-mini", ".testimonial-card", ".feature-card",
+      ".stats-card", ".score-box", "table", ".table-responsive",
+      ".neo-input", ".skill-slide", ".process-step"
+    ].join(",");
+
+    var nodes = document.querySelectorAll(selector);
+    nodes.forEach(function (el) {
+      if (!el.hasAttribute("data-reveal")) {
+        el.setAttribute("data-reveal", "");
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     3. Stagger delays within a shared parent (grids, lists, rows)
+     ------------------------------------------------------------------- */
+  function applyStagger() {
+    var groups = document.querySelectorAll(
+      ".row, .skills-track, .footer-links, tbody"
+    );
+    groups.forEach(function (group) {
+      var children = group.querySelectorAll(":scope > [data-reveal], :scope > * [data-reveal]");
+      var direct = Array.prototype.filter.call(
+        group.children,
+        function (c) { return c.hasAttribute("data-reveal") || c.querySelector("[data-reveal]"); }
+      );
+      direct.forEach(function (child, i) {
+        var target = child.hasAttribute("data-reveal") ? child : child.querySelector("[data-reveal]");
+        if (target && !target.style.getPropertyValue("--d")) {
+          target.style.setProperty("--d", Math.min(i * 70, 420) + "ms");
+        }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     4. IntersectionObserver reveal
+     ------------------------------------------------------------------- */
+  function initReveal() {
+    var targets = document.querySelectorAll("[data-reveal]");
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      targets.forEach(function (el) { el.classList.add("is-visible"); });
+      return;
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    targets.forEach(function (el) { observer.observe(el); });
+  }
+
+  /* ---------------------------------------------------------------------
+     5. Navbar scroll state
+     ------------------------------------------------------------------- */
+  function initNavbarScroll() {
+    var nav = document.querySelector(".t2l-navbar");
+    if (!nav) return;
+    function onScroll() {
+      nav.classList.toggle("is-scrolled", window.scrollY > 12);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+
+  /* ---------------------------------------------------------------------
+     6. Button ripple micro-interaction (subtle, no color cycling)
+     ------------------------------------------------------------------- */
+  function initButtonRipple() {
+    if (reduceMotion) return;
+    document.querySelectorAll(".btn").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        var rect = btn.getBoundingClientRect();
+        var ripple = document.createElement("span");
+        var size = Math.max(rect.width, rect.height);
+        ripple.style.position = "absolute";
+        ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+        ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+        ripple.style.width = ripple.style.height = size + "px";
+        ripple.style.borderRadius = "50%";
+        ripple.style.background = "rgba(255,255,255,0.35)";
+        ripple.style.transform = "scale(0)";
+        ripple.style.opacity = "1";
+        ripple.style.pointerEvents = "none";
+        ripple.style.transition = "transform .5s ease, opacity .6s ease";
+        var prevPosition = getComputedStyle(btn).position;
+        if (prevPosition === "static") btn.style.position = "relative";
+        btn.style.overflow = "hidden";
+        btn.appendChild(ripple);
+        requestAnimationFrame(function () {
+          ripple.style.transform = "scale(2.2)";
+          ripple.style.opacity = "0";
+        });
+        setTimeout(function () { ripple.remove(); }, 650);
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     7. Active nav-link highlight based on current path
+     ------------------------------------------------------------------- */
+  function highlightActiveLink() {
+    var path = window.location.pathname.replace(/\/$/, "");
+    document.querySelectorAll(".t2l-navbar .nav-link").forEach(function (link) {
+      var linkPath = (link.getAttribute("href") || "").replace(/\/$/, "");
+      if (linkPath && linkPath === path) {
+        link.classList.add("active");
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     Init
+     ------------------------------------------------------------------- */
+  document.addEventListener("DOMContentLoaded", function () {
+    pageLoadFade();
+    autoTagReveals();
+    applyStagger();
+    initReveal();
+    initNavbarScroll();
+    initButtonRipple();
+    highlightActiveLink();
+  });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/animations.js' %}"></script>
+</body>
+</html>
